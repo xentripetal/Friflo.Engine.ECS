@@ -6,7 +6,7 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS.Index;
 
-internal abstract class ValueCondition
+abstract class ValueCondition
 {
     internal abstract void AddMatchingEntities(EntityStore store, HashSet<int> idSet);
 }

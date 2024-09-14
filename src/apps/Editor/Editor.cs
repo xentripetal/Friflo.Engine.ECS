@@ -20,80 +20,89 @@ namespace Friflo.Editor;
 
 public partial class Editor : AppEvents
 {
-#region private fields
-    private             StoreSync               sync;
-    private             EventProcessorQueue     processor;
-    private             HttpServer              server;
-    
+    #region private fields
+
+    private StoreSync sync;
+    private EventProcessorQueue processor;
+    private HttpServer server;
+
     private static readonly bool SyncDatabase = true;
 
     #endregion
 
     // ---------------------------------------- public methods ----------------------------------------
-#region public methods
+
+    #region public methods
+
     public async Task Init()
     {
         StoreDispatcher.AssertMainThread();
-        store       = new EntityStore(PidType.UsePidAsId);
-        var root    = store.CreateEntity();
+        store = new EntityStore(PidType.UsePidAsId);
+        var root = store.CreateEntity();
         root.AddComponent(new EntityName("Editor Root"));
         store.SetStoreRoot(root);
-        
+
         Console.WriteLine($"--- Editor.OnReady() {Program.startTime.ElapsedMilliseconds} ms");
         isReady = true;
         StoreDispatcher.Post(() => {
             EditorObserver.CastEditorReady(observers);
         });
         // --- add client and database
-        var schema          = DatabaseSchema.Create<StoreClient>();
-        var database        = CreateDatabase(schema, "in-memory");
-        var storeCommands   = new StoreCommands(store);
+        var schema = DatabaseSchema.Create<StoreClient>();
+        var database = CreateDatabase(schema, "in-memory");
+        var storeCommands = new StoreCommands(store);
         database.AddCommands(storeCommands);
-        
-        var hub             = new FlioxHub(database);
-        hub.UsePubSub();    // need currently called before SetupSubscriptions()
+
+        var hub = new FlioxHub(database);
+        hub.UsePubSub(); // need currently called before SetupSubscriptions()
         hub.EventDispatcher = new EventDispatcher(EventDispatching.Send);
         //
-        var client          = new StoreClient(hub);
-        if (SyncDatabase) {
-            sync            = new StoreSync(store, client);
-            processor       = new EventProcessorQueue(ReceivedEvent);
+        var client = new StoreClient(hub);
+        if (SyncDatabase)
+        {
+            sync = new StoreSync(store, client);
+            processor = new EventProcessorQueue(ReceivedEvent);
             client.SetEventProcessor(processor);
             await sync.SubscribeDatabaseChangesAsync();
         }
         TestBed.AddSampleEntities(store);
-        if (SyncDatabase) {
-            store.OnComponentAdded     += args => SyncEntity(args.EntityId); 
-            store.OnComponentRemoved   += args => SyncEntity(args.EntityId); 
-            store.OnScriptAdded        += args => SyncEntity(args.Entity.Id); 
-            store.OnScriptRemoved      += args => SyncEntity(args.Entity.Id); 
-            store.OnTagsChanged        += args => SyncEntity(args.EntityId);
+        if (SyncDatabase)
+        {
+            store.OnComponentAdded += args => SyncEntity(args.EntityId);
+            store.OnComponentRemoved += args => SyncEntity(args.EntityId);
+            store.OnScriptAdded += args => SyncEntity(args.Entity.Id);
+            store.OnScriptRemoved += args => SyncEntity(args.Entity.Id);
+            store.OnTagsChanged += args => SyncEntity(args.EntityId);
             await sync.StoreEntitiesAsync();
         }
         store.OnChildEntitiesChanged += ChildEntitiesChangedHandler;
-        
+
         StoreDispatcher.AssertMainThread();
         // --- run server
         server = RunServer(hub);
     }
-    
+
     private void SyncEntity(int id)
     {
         sync.UpsertDataEntity(id);
         PostSyncChanges();
     }
-    
-    internal void Shutdown() {
+
+    internal void Shutdown()
+    {
         server?.Stop();
     }
+
     #endregion
-    
+
 
 
     // ---------------------------------------- private methods ----------------------------------------
-#region private methods
-    /// <summary>SYNC: <see cref="Entity"/> -> <see cref="StoreSync"/></summary>
-    private void ChildEntitiesChangedHandler (ChildEntitiesChanged args)
+
+    #region private methods
+
+    /// <summary>SYNC: <see cref="Entity" /> -> <see cref="StoreSync" /></summary>
+    private void ChildEntitiesChangedHandler(ChildEntitiesChanged args)
     {
         StoreDispatcher.AssertMainThread();
         switch (args.Action)
@@ -102,51 +111,58 @@ public partial class Editor : AppEvents
                 sync?.UpsertDataEntity(args.EntityId);
                 PostSyncChanges();
                 break;
+
             case ChildEntitiesChangedAction.Remove:
                 sync?.UpsertDataEntity(args.EntityId);
                 PostSyncChanges();
                 break;
         }
     }
-    
+
     private bool syncChangesPending;
-    
+
     /// Accumulate change tasks and SyncTasks() at once.
-    private void PostSyncChanges() {
-        if (syncChangesPending) {
+    private void PostSyncChanges()
+    {
+        if (syncChangesPending)
+        {
             return;
         }
         syncChangesPending = true;
         StoreDispatcher.Post(SyncChangesAsync);
     }
-    
-    private async void SyncChangesAsync() {
+
+    async private void SyncChangesAsync()
+    {
         syncChangesPending = false;
         StoreDispatcher.AssertMainThread();
-        if (sync != null) {
+        if (sync != null)
+        {
             await sync.SyncChangesAsync();
         }
     }
-    
-    private void ProcessEvents() {
+
+    private void ProcessEvents()
+    {
         StoreDispatcher.AssertMainThread();
         processor.ProcessEvents();
     }
-    
-    private void ReceivedEvent () {
+
+    private void ReceivedEvent()
+    {
         StoreDispatcher.Post(ProcessEvents);
     }
-    
+
     private static HttpServer RunServer(FlioxHub hub)
     {
-        hub.Info.Set ("Editor", "dev", "https://github.com/friflo/Friflo.Engine.ECS", "rgb(91,21,196)"); // optional
+        hub.Info.Set("Editor", "dev", "https://github.com/friflo/Friflo.Engine.ECS", "rgb(91,21,196)"); // optional
         hub.UseClusterDB(); // required by HubExplorer
 
         // --- create HttpHost
-        var httpHost    = new HttpHost(hub, "/fliox/");
+        var httpHost = new HttpHost(hub, "/fliox/");
         httpHost.UseStaticFiles(HubExplorer.Path); // nuget: https://www.nuget.org/packages/Friflo.Json.Fliox.Hub.Explorer
-    
-        var server = new HttpServer ("http://localhost:5000/", httpHost);  // http://localhost:5000/fliox/
+
+        var server = new HttpServer("http://localhost:5000/", httpHost); // http://localhost:5000/fliox/
         var thread = new Thread(_ => {
             // HttpServer.RunHost("http://localhost:5000/", httpHost); // http://localhost:5000/fliox/
             server.Start();
@@ -155,17 +171,26 @@ public partial class Editor : AppEvents
         thread.Start();
         return server;
     }
-    
+
     private static EntityDatabase CreateDatabase(DatabaseSchema schema, string provider)
     {
-        if (provider == "file-system") {
+        if (provider == "file-system")
+        {
             var directory = Directory.GetCurrentDirectory() + "/DB";
-            return new FileDatabase("game", directory, schema) { Pretty = false };
+            return new FileDatabase("game", directory, schema)
+            {
+                Pretty = false
+            };
         }
-        if (provider == "in-memory") {
-            return new MemoryDatabase("game", schema) { Pretty = false };
+        if (provider == "in-memory")
+        {
+            return new MemoryDatabase("game", schema)
+            {
+                Pretty = false
+            };
         }
         throw new ArgumentException($"invalid database provider: {provider}");
     }
+
     #endregion
 }

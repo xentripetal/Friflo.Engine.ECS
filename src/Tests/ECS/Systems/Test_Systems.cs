@@ -22,30 +22,39 @@ namespace Tests.ECS.Systems
             var typeStore = new TypeStore();
             var positionMapper = typeStore.GetTypeMapper<PositionSystem>();
             NotNull(positionMapper);
-            
+
             var mapper = new ObjectMapper(typeStore);
             {
-                var writeSystem = new PositionSystem { x = 42 };
+                var writeSystem = new PositionSystem
+                {
+                    x = 42
+                };
                 var json = mapper.Write(writeSystem);
                 AreEqual("{\"id\":0,\"enabled\":true,\"x\":42}", json);
-                
+
                 var readSystem = mapper.Read<PositionSystem>(json);
                 AreEqual(42, readSystem.x);
-            } {
+            }
+            {
                 var writeSystem = new SystemGroup("Update");
                 var json = mapper.Write(writeSystem);
                 AreEqual("{\"id\":0,\"enabled\":true,\"name\":\"Update\"}", json);
-                
+
                 var readSystem = mapper.Read<SystemGroup>(json);
                 AreEqual("Update", readSystem.Name);
-            } {
-                var writeSystem = new MySystem1 { value = "test" };
+            }
+            {
+                var writeSystem = new MySystem1
+                {
+                    value = "test"
+                };
                 var json = mapper.Write(writeSystem);
                 AreEqual("{\"id\":0,\"enabled\":true,\"value\":\"test\"}", json);
-                
+
                 var readSystem = mapper.Read<MySystem1>(json);
                 AreEqual("test", readSystem.value);
-            } {
+            }
+            {
                 var writeSystem = new SystemRoot("Systems");
                 var e = Throws<TargetInvocationException>(() => {
                     mapper.Write(writeSystem);

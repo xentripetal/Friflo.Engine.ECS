@@ -7,55 +7,62 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal static class SchemaTypeUtils
+static class SchemaTypeUtils
 {
     internal static int GetStructIndex(Type type)
     {
         var schema = EntityStoreBase.Static.EntitySchema;
-        if (schema.ComponentTypeByType.TryGetValue(type, out var componentType)) {
+        if (schema.ComponentTypeByType.TryGetValue(type, out var componentType))
+        {
             return componentType.StructIndex;
         }
         throw ComponentTypeException(type, nameof(IComponent));
     }
-    
+
     internal static bool HasIndex(Type type)
     {
         var componentType = EntityStoreBase.Static.EntitySchema.ComponentTypeByType[type];
         return componentType.IndexType != null;
     }
-    
+
     internal static bool IsRelation(Type type)
     {
         var componentType = EntityStoreBase.Static.EntitySchema.ComponentTypeByType[type];
         return componentType.RelationType != null;
     }
-    
+
     internal static int GetTagIndex(Type type)
     {
         var schema = EntityStoreBase.Static.EntitySchema;
-        if (schema.TagTypeByType.TryGetValue(type, out var tagType)) {
+        if (schema.TagTypeByType.TryGetValue(type, out var tagType))
+        {
             return tagType.TagIndex;
         }
         throw ComponentTypeException(type, nameof(ITag));
     }
-    
+
     internal static int GetScriptIndex(Type type)
     {
         var schema = EntityStoreBase.Static.EntitySchema;
         return schema.ScriptTypeByType[type].ScriptIndex;
     }
-    
+
     internal static InvalidOperationException ComponentTypeException(Type type, string typeBase)
     {
-        if (!type.IsGenericType) {
+        if (!type.IsGenericType)
+        {
             return new InvalidOperationException($"{typeBase} type not found: {type}");
         }
         var sb = new StringBuilder();
-        bool isFirst = true;
-        foreach (var arg in type.GenericTypeArguments) {
-            if (isFirst) {
+        var isFirst = true;
+        foreach (var arg in type.GenericTypeArguments)
+        {
+            if (isFirst)
+            {
                 isFirst = false;
-            } else {
+            }
+            else
+            {
                 sb.Append(", ");
             }
             sb.Append("typeof(");

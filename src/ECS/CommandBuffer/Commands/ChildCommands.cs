@@ -5,11 +5,11 @@
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal struct ChildCommand
+struct ChildCommand
 {
-    internal    int                         parentId;   //  4
-    internal    int                         childId;    //  4
-    internal    ChildEntitiesChangedAction  action;     //  1
+    internal int parentId; //  4
+    internal int childId; //  4
+    internal ChildEntitiesChangedAction action; //  1
 
     public override string ToString() => $"entity: {parentId} - {action} child: {childId}";
 }

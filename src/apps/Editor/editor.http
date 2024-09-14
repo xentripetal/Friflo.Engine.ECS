@@ -3,7 +3,10 @@ POST http://localhost:5000/fliox/rest/game?cmd=store.GetEntities
 Content-Type: application/json
 
 {
-    "ids": [2, 3]
+    "ids": [
+        2,
+        3
+    ]
 }
 
 
@@ -16,15 +19,23 @@ Content-Type: application/json
     "entities": [
         {
             "id": 2,
-            "tags": ["Tag1"],
+            "tags": [
+                "Tag1"
+            ],
             "components": {
-                "name": { "value": "test" }
+                "name": {
+                    "value": "test"
+                }
             },
-            "children": [3]
+            "children": [
+                3
+            ]
         },
         {
             "id": 3,
-            "tags": ["Tag2"]
+            "tags": [
+                "Tag2"
+            ]
         }
     ]
 }

@@ -1,6 +1,4 @@
-﻿
-#if UNITY_5_3_OR_NEWER
-
+﻿#if UNITY_5_3_OR_NEWER
 using System.IO;
 using UnityEditor;
 using UnityEngine;

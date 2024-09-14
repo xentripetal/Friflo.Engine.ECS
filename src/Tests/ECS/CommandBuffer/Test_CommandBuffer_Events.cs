@@ -5,113 +5,121 @@ using static NUnit.Framework.Assert;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable once CheckNamespace
-namespace Tests.ECS.Buffer {
-
-public static class Test_CommandBuffer_Events
+namespace Tests.ECS.Buffer
 {
-    [Test]
-    public static void Test_CommandBuffer_Events_Components()
+    public static class Test_CommandBuffer_Events
     {
-        var store   = new EntityStore();
-        int addCount = 0;
-        store.OnComponentAdded += changed => {
-            switch (addCount++) {
-                case 0:
-                    Mem.IsTrue(ComponentChangedAction.Add == changed.Action);
-                    break;
-                case 1:
-                    Mem.IsTrue(ComponentChangedAction.Update == changed.Action);
-                    var old = changed.OldComponent<Position>();
-                    Mem.AreEqual(new Position(1,1,1), old);
-                    break;
-           }
-        };
-        int removeCount = 0;
-        store.OnComponentRemoved += changed => {
-            switch (removeCount++) {
-                case 0:
-                    Mem.IsTrue(ComponentChangedAction.Remove == changed.Action);
-                    var old = changed.OldComponent<Position>();
-                    Mem.AreEqual(new Position(2,2,2), old);
-                    break;
-            }
-        };
-        var entity  = store.CreateEntity();
-        var ecb     = store.GetCommandBuffer();
-        ecb.ReuseBuffer = true;
+        [Test]
+        public static void Test_CommandBuffer_Events_Components()
+        {
+            var store = new EntityStore();
+            var addCount = 0;
+            store.OnComponentAdded += changed => {
+                switch (addCount++)
+                {
+                    case 0:
+                        Mem.IsTrue(ComponentChangedAction.Add == changed.Action);
+                        break;
 
-        ecb.AddComponent(entity.Id, new Position(1,1,1));
-        ecb.Playback(); // Add component
-        
-        ecb.AddComponent(entity.Id, new Position(2,2,2));
-        ecb.Playback(); // Update component
+                    case 1:
+                        Mem.IsTrue(ComponentChangedAction.Update == changed.Action);
+                        var old = changed.OldComponent<Position>();
+                        Mem.AreEqual(new Position(1, 1, 1), old);
+                        break;
+                }
+            };
+            var removeCount = 0;
+            store.OnComponentRemoved += changed => {
+                switch (removeCount++)
+                {
+                    case 0:
+                        Mem.IsTrue(ComponentChangedAction.Remove == changed.Action);
+                        var old = changed.OldComponent<Position>();
+                        Mem.AreEqual(new Position(2, 2, 2), old);
+                        break;
+                }
+            };
+            var entity = store.CreateEntity();
+            var ecb = store.GetCommandBuffer();
+            ecb.ReuseBuffer = true;
 
-        ecb.RemoveComponent<Position>(entity.Id);
-        ecb.Playback(); // Remove component
-        
-        ecb.RemoveComponent<Position>(entity.Id);
-        ecb.Playback(); // Remove component - already removed
-        
-        AreEqual(2, addCount);
-        AreEqual(1, removeCount);
-    }
-    
-    [Test]
-    public static void Test_CommandBuffer_Events_Tags()
-    {
-        var store   = new EntityStore();
-        int tagEventCount = 0;
-        store.OnTagsChanged += changed => {
-            switch (tagEventCount++) {
-                case 0:
-                    Mem.IsTrue(Tags.Get<TestTag>() == changed.AddedTags);
-                    break;
-                case 1:
-                    Mem.IsTrue(Tags.Get<TestTag>() == changed.RemovedTags);
-                    break;
-            }
-        };
-        var entity  = store.CreateEntity();
-        var ecb     = store.GetCommandBuffer();
-        ecb.ReuseBuffer = true;
-        
-        ecb.AddTag<TestTag>(entity.Id);
-        ecb.Playback(); // Add Tag
+            ecb.AddComponent(entity.Id, new Position(1, 1, 1));
+            ecb.Playback(); // Add component
 
-        ecb.AddTag<TestTag>(entity.Id);
-        ecb.Playback(); // Add Tag - already added
-        
-        ecb.RemoveTag<TestTag>(entity.Id);
-        ecb.Playback(); // Remove Tag
-        
-        ecb.RemoveTag<TestTag>(entity.Id);
-        ecb.Playback(); // Remove Tag - already removed
-        
-        AreEqual(2, tagEventCount);
-    }
-    
-    [Test]
-    public static void Test_CommandBuffer_AddRemoveComponent_Perf()
-    {
-        int repeat  = 10; // 1_000_000 ~ #PC: 10.298 sec
-        var store   = new EntityStore();
-        var entities = new Entity[100];
-        for (int n = 0; n < entities.Length; n++) {
-            entities[n] = store.CreateEntity();
+            ecb.AddComponent(entity.Id, new Position(2, 2, 2));
+            ecb.Playback(); // Update component
+
+            ecb.RemoveComponent<Position>(entity.Id);
+            ecb.Playback(); // Remove component
+
+            ecb.RemoveComponent<Position>(entity.Id);
+            ecb.Playback(); // Remove component - already removed
+
+            AreEqual(2, addCount);
+            AreEqual(1, removeCount);
         }
-        var ecb     = store.GetCommandBuffer();
-        ecb.ReuseBuffer = true;
-        for (int i = 0; i < repeat; i++) {
-            foreach (var entity in entities) {
-                ecb.AddComponent(entity.Id, new Position());
+
+        [Test]
+        public static void Test_CommandBuffer_Events_Tags()
+        {
+            var store = new EntityStore();
+            var tagEventCount = 0;
+            store.OnTagsChanged += changed => {
+                switch (tagEventCount++)
+                {
+                    case 0:
+                        Mem.IsTrue(Tags.Get<TestTag>() == changed.AddedTags);
+                        break;
+
+                    case 1:
+                        Mem.IsTrue(Tags.Get<TestTag>() == changed.RemovedTags);
+                        break;
+                }
+            };
+            var entity = store.CreateEntity();
+            var ecb = store.GetCommandBuffer();
+            ecb.ReuseBuffer = true;
+
+            ecb.AddTag<TestTag>(entity.Id);
+            ecb.Playback(); // Add Tag
+
+            ecb.AddTag<TestTag>(entity.Id);
+            ecb.Playback(); // Add Tag - already added
+
+            ecb.RemoveTag<TestTag>(entity.Id);
+            ecb.Playback(); // Remove Tag
+
+            ecb.RemoveTag<TestTag>(entity.Id);
+            ecb.Playback(); // Remove Tag - already removed
+
+            AreEqual(2, tagEventCount);
+        }
+
+        [Test]
+        public static void Test_CommandBuffer_AddRemoveComponent_Perf()
+        {
+            var repeat = 10; // 1_000_000 ~ #PC: 10.298 sec
+            var store = new EntityStore();
+            var entities = new Entity[100];
+            for (var n = 0; n < entities.Length; n++)
+            {
+                entities[n] = store.CreateEntity();
             }
-            ecb.Playback();
-            foreach (var entity in entities) {
-                ecb.RemoveComponent<Position>(entity.Id);
+            var ecb = store.GetCommandBuffer();
+            ecb.ReuseBuffer = true;
+            for (var i = 0; i < repeat; i++)
+            {
+                foreach (var entity in entities)
+                {
+                    ecb.AddComponent(entity.Id, new Position());
+                }
+                ecb.Playback();
+                foreach (var entity in entities)
+                {
+                    ecb.RemoveComponent<Position>(entity.Id);
+                }
+                ecb.Playback();
             }
-            ecb.Playback();
         }
     }
-}
-
 }

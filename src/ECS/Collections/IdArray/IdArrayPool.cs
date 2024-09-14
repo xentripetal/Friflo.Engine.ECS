@@ -7,32 +7,29 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS.Collections;
 
-internal sealed class IdArrayPool
+sealed class IdArrayPool
 {
-    public              int             Count       => count;
-    internal            int             FreeCount   => freeStarts.Count;
-    
-    private             int[]           ids;
-    private             StackArray<int> freeStarts;
-    private  readonly   int             arraySize;
-    private             int             freeStart;
-    private             int             maxStart;
-    private             int             count;
+    private readonly int arraySize;
+    private int freeStart;
+    private StackArray<int> freeStarts;
 
-    public override string ToString() => $"arraySize: {arraySize} count: {count}";
+    private int[] ids;
+    private int maxStart;
 
     internal IdArrayPool(int poolIndex)
     {
-        arraySize   = 2 << (poolIndex - 1);
-        ids         = Array.Empty<int>();
-        freeStarts  = new StackArray<int>(Array.Empty<int>());
+        arraySize = 2 << poolIndex - 1;
+        ids = Array.Empty<int>();
+        freeStarts = new StackArray<int>(Array.Empty<int>());
     }
-    
-    internal static int[] GetIds(int count, IdArrayHeap heap)
-    {
-        return heap.pools[IdArrayHeap.PoolIndex(count)].ids;
-    }
-    
+
+    public int Count { get; private set; }
+    internal int FreeCount => freeStarts.Count;
+
+    public override string ToString() => $"arraySize: {arraySize} count: {Count}";
+
+    internal static int[] GetIds(int count, IdArrayHeap heap) => heap.pools[IdArrayHeap.PoolIndex(count)].ids;
+
     internal static IdArrayPool GetPool(IdArrayHeap heap, int index, out int[] ids)
     {
         var pool = heap.pools[index];
@@ -41,40 +38,42 @@ internal sealed class IdArrayPool
     }
 
     /// <summary>
-    /// Return the start index within the returned newIds.
+    ///     Return the start index within the returned newIds.
     /// </summary>
     internal int CreateArray(out int[] newIds)
     {
-        count++;
-        if (freeStarts.TryPop(out var start)) {
+        Count++;
+        if (freeStarts.TryPop(out var start))
+        {
             newIds = ids;
             return start;
         }
-        start       = freeStart;
-        freeStart   = start + arraySize;
-        if (start < maxStart) {
+        start = freeStart;
+        freeStart = start + arraySize;
+        if (start < maxStart)
+        {
             newIds = ids;
             return start;
         }
-        maxStart    = Math.Max(4 * arraySize, 2 * maxStart);
+        maxStart = Math.Max(4 * arraySize, 2 * maxStart);
         ArrayUtils.Resize(ref ids, maxStart);
         newIds = ids;
         return start;
     }
-    
+
     /// <summary>
-    /// Delete the array with the passed start index.
+    ///     Delete the array with the passed start index.
     /// </summary>
     internal void DeleteArray(int start, out int[] ids)
     {
-        count--;
+        Count--;
         ids = this.ids;
-        if (count > 0) {
+        if (Count > 0)
+        {
             freeStarts.Push(start);
             return;
         }
         freeStart = 0;
         freeStarts.Clear();
     }
-    
 }

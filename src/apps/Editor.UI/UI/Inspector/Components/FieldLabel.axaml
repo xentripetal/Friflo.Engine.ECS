@@ -8,5 +8,5 @@
 
     <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10 1 2 0"
                DockPanel.Dock="Left"
-               Text="{Binding $parent[local:FieldLabel].Text}"/>
+               Text="{Binding $parent[local:FieldLabel].Text}" />
 </UserControl>

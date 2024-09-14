@@ -6,24 +6,24 @@ using System.Text;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal struct TypeFilter
+struct TypeFilter
 {
-    internal    int                 index;      //  4
-    internal    SchemaTypeKind      kind;       //  1
-    internal    EntityEventAction   action;     //  1
+    internal int index; //  4
+    internal SchemaTypeKind kind; //  1
+    internal EntityEventAction action; //  1
 }
 
-
-internal struct EventFilters
+struct EventFilters
 {
-    internal    TypeFilter[]        items;
-    internal    int                 count;
+    internal TypeFilter[] items;
+    internal int count;
 
-    public override string  ToString() => GetString();
-    
+    public override string ToString() => GetString();
+
     private string GetString()
     {
-        if (count == 0) {
+        if (count == 0)
+        {
             return "[]";
         }
         var sb = new StringBuilder();
@@ -32,7 +32,7 @@ internal struct EventFilters
         AppendString(sb, EntityEventAction.Added);
         if (sb.Length > start) sb.Length -= 2;
         sb.Append("]  ");
-        
+
         sb.Append("removed: [");
         start = sb.Length;
         AppendString(sb, EntityEventAction.Removed);
@@ -40,20 +40,24 @@ internal struct EventFilters
         sb.Append(']');
         return sb.ToString();
     }
-    
+
     internal void AppendString(StringBuilder sb, EntityEventAction action)
     {
-        var schema  = EntityStoreBase.Static.EntitySchema;
-        for (int n = 0; n < count; n++)
+        var schema = EntityStoreBase.Static.EntitySchema;
+        for (var n = 0; n < count; n++)
         {
-            TypeFilter filter = items[n];
-            if (filter.action != action) {
+            var filter = items[n];
+            if (filter.action != action)
+            {
                 continue;
             }
-            if (filter.kind == SchemaTypeKind.Component) {
+            if (filter.kind == SchemaTypeKind.Component)
+            {
                 var type = schema.components[filter.index];
                 sb.Append(type.Name);
-            } else {
+            }
+            else
+            {
                 var type = schema.tags[filter.index];
                 sb.Append('#');
                 sb.Append(type.Name);

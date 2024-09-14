@@ -12,60 +12,60 @@ using Friflo.Json.Fliox.Mapper;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-
 /// <remarks>
-/// <b>Note:</b> Should not contain any other fields. Reasons:<br/>
-/// - to enable maximum efficiency when GC iterate <see cref="Archetype.structHeaps"/> <see cref="Archetype.heapMap"/>
-///   for collection.
+///     <b>Note:</b> Should not contain any other fields. Reasons:<br />
+///     - to enable maximum efficiency when GC iterate <see cref="Archetype.structHeaps" />
+///     <see cref="Archetype.heapMap" />
+///     for collection.
 /// </remarks>
-internal abstract class StructHeap : IComponentStash
+abstract class StructHeap : IComponentStash
 {
     // Note: Should not contain any other field. See class <remarks>
     // --- internal fields
-    internal readonly   int         structIndex;    //  4
+    internal readonly int structIndex; //  4
 #if DEBUG
     // ReSharper disable once NotAccessedField.Local
-    private             Archetype   archetype;      // only used for debugging
+    private Archetype archetype; // only used for debugging
 #endif
-    public    abstract  IComponent  GetStashDebug  ();
 
-    internal  abstract  Type        StructType              { get; }
-    internal  abstract  void        StashComponent          (int compIndex);
-    internal  abstract  void        SetBatchComponent       (BatchComponent[] components, int compIndex);
-    protected abstract  int         ComponentsLength        { get; }
-    internal  abstract  void        ResizeComponents        (int capacity, int count);
-    internal  abstract  void        MoveComponent           (int from, int to);
-    internal  abstract  void        CopyComponentTo         (int sourcePos, StructHeap target, int targetPos);
-    internal  abstract  void        CopyComponent           (int sourcePos, int targetPos);
-    internal  abstract  void        SetComponentDefault     (int compIndex);
-    internal  abstract  void        SetComponentsDefault    (int compIndexStart, int count);
-    internal  abstract  IComponent  GetComponentDebug       (int compIndex);
-    internal  abstract  Bytes       Write                   (ObjectWriter writer, int compIndex);
-    internal  abstract  void        Read                    (ObjectReader reader, int compIndex, JsonValue json);
+    internal StructHeap(int structIndex) => this.structIndex = structIndex;
 
-    internal StructHeap(int structIndex) {
-        this.structIndex    = structIndex;
-    }
+    internal abstract Type StructType { get; }
+    protected abstract int ComponentsLength { get; }
+    public abstract IComponent GetStashDebug();
+    internal abstract void StashComponent(int compIndex);
+    internal abstract void SetBatchComponent(BatchComponent[] components, int compIndex);
+    internal abstract void ResizeComponents(int capacity, int count);
+    internal abstract void MoveComponent(int from, int to);
+    internal abstract void CopyComponentTo(int sourcePos, StructHeap target, int targetPos);
+    internal abstract void CopyComponent(int sourcePos, int targetPos);
+    internal abstract void SetComponentDefault(int compIndex);
+    internal abstract void SetComponentsDefault(int compIndexStart, int count);
+    internal abstract IComponent GetComponentDebug(int compIndex);
+    internal abstract Bytes Write(ObjectWriter writer, int compIndex);
+    internal abstract void Read(ObjectReader reader, int compIndex, JsonValue json);
 
-    internal void SetArchetypeDebug(Archetype archetype) {
+    internal void SetArchetypeDebug(Archetype archetype)
+    {
 #if DEBUG
         this.archetype = archetype;
 #endif
     }
-    
+
     /*
     [Conditional("DEBUG")] [ExcludeFromCodeCoverage]
     internal static void AssertChunksLength(int expect, int actual) {
         if (expect != actual) throw new InvalidOperationException($"expect chunk length: {expect}, was: {actual}");
     }
-    
+
     [Conditional("DEBUG")] [ExcludeFromCodeCoverage]
     internal static void AssertChunkComponentsNull(object components) {
         if (components != null) throw new InvalidOperationException($"expect components == null");
     } */
-    
-    public override string ToString() {
-        int length = ComponentsLength;
+
+    public override string ToString()
+    {
+        var length = ComponentsLength;
         var sb = new StringBuilder();
         sb.Append("StructHeap<");
         sb.Append(StructType.Name);

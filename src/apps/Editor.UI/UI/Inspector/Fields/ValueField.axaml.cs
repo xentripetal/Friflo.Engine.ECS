@@ -10,20 +10,26 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class ValueField : UserControl, IFieldControl
 {
-    public static readonly DirectProperty<ValueField, string> ValueProperty = AP.RegisterDirect<ValueField, string>(nameof(Value), o => o.Value, (o, v) => o.Value = v);
+    public static readonly DirectProperty<ValueField, string> ValueProperty =
+        AP.RegisterDirect<ValueField, string>(nameof(Value), o => o.Value, (o, v) => o.Value = v);
 
-    private string          text;
-    public  ComponentField  ComponentField { get; init; }
-    
-    public  string   Value { get => text; set => Set(ValueProperty, ref text, value); }
-    
-    private void Set(DirectPropertyBase<string> property, ref string field, string value) {
-        ComponentField?.SetString(value);
-        SetAndRaise(property, ref field, value);
-    }
+    private string text;
 
     public ValueField()
     {
         InitializeComponent();
+    }
+
+    public string Value
+    {
+        get => text;
+        set => Set(ValueProperty, ref text, value);
+    }
+    public ComponentField ComponentField { get; init; }
+
+    private void Set(DirectPropertyBase<string> property, ref string field, string value)
+    {
+        ComponentField?.SetString(value);
+        SetAndRaise(property, ref field, value);
     }
 }

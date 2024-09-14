@@ -10,12 +10,16 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class InspectorTagSet : UserControl, IExpandable
 {
-    public static readonly StyledProperty<bool>     ExpandedProperty        = AP.Register<InspectorTagSet, bool>  (nameof(Expanded), true);
+    public static readonly StyledProperty<bool> ExpandedProperty = AP.Register<InspectorTagSet, bool>(nameof(Expanded), true);
 
-    public bool     Expanded        { get => GetValue(ExpandedProperty);        set => SetValue(ExpandedProperty,       value); }
-    
     public InspectorTagSet()
     {
         InitializeComponent();
+    }
+
+    public bool Expanded
+    {
+        get => GetValue(ExpandedProperty);
+        set => SetValue(ExpandedProperty, value);
     }
 }

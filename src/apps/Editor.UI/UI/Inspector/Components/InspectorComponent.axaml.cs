@@ -14,34 +14,45 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class InspectorComponent : UserControl, IExpandable
 {
-    public static readonly StyledProperty<string>   ComponentTitleProperty  = AP.Register<InspectorComponent, string>(nameof(ComponentTitle), "Component");
-    public static readonly StyledProperty<bool>     ExpandedProperty        = AP.Register<InspectorComponent, bool>  (nameof(Expanded), true);
-    
-    public string   ComponentTitle  { get => GetValue(ComponentTitleProperty);  set => SetValue(ComponentTitleProperty, value); }
-    public bool     Expanded        { get => GetValue(ExpandedProperty);        set => SetValue(ExpandedProperty,       value); }
-    
-    public Entity           Entity          { get; set; }
-    public ComponentType    ComponentType   { get; init; }
-    public ScriptType       ScriptType      { get; init; }
-
-    public override string  ToString()      => $"Title: {ComponentTitle}, Expanded: {Expanded}, IsVisible: {IsVisible}";
+    public static readonly StyledProperty<string> ComponentTitleProperty = AP.Register<InspectorComponent, string>(nameof(ComponentTitle), "Component");
+    public static readonly StyledProperty<bool> ExpandedProperty = AP.Register<InspectorComponent, bool>(nameof(Expanded), true);
 
     public InspectorComponent()
     {
         InitializeComponent();
     }
 
-    private void Button_OnClick(object sender, RoutedEventArgs e) {
+    public string ComponentTitle
+    {
+        get => GetValue(ComponentTitleProperty);
+        set => SetValue(ComponentTitleProperty, value);
+    }
+
+    public Entity Entity { get; set; }
+    public ComponentType ComponentType { get; init; }
+    public ScriptType ScriptType { get; init; }
+    public bool Expanded
+    {
+        get => GetValue(ExpandedProperty);
+        set => SetValue(ExpandedProperty, value);
+    }
+
+    public override string ToString() => $"Title: {ComponentTitle}, Expanded: {Expanded}, IsVisible: {IsVisible}";
+
+    private void Button_OnClick(object sender, RoutedEventArgs e)
+    {
         Expanded = !Expanded;
     }
 
     private void MenuItem_RemoveComponent(object sender, RoutedEventArgs e)
     {
         Console.WriteLine("MenuItem_RemoveComponent");
-        if (ComponentType != null) {
+        if (ComponentType != null)
+        {
             EntityUtils.RemoveEntityComponent(Entity, ComponentType);
         }
-        if (ScriptType != null) {
+        if (ScriptType != null)
+        {
             EntityUtils.RemoveEntityScript(Entity, ScriptType);
         }
     }

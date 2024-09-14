@@ -7,7 +7,7 @@
         <Nullable>disable</Nullable>
         <GenerateProgramFile>true</GenerateProgramFile>
         <RootNamespace>GameTest</RootNamespace>
-        
+
         <!-- Avalionia specific -->
         <AssemblyName>GameTest</AssemblyName>
 
@@ -18,35 +18,35 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-      <DefineConstants>TRACE</DefineConstants>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <DefineConstants>TRACE</DefineConstants>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Hub\Engine.Hub.csproj" />
+        <ProjectReference Include="..\..\Hub\Engine.Hub.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Friflo.Json.Fliox.Hub.Explorer" Version="1.0.2" />
+        <PackageReference Include="Friflo.Json.Fliox.Hub.Explorer" Version="1.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Include="Assets\**"/>
     </ItemGroup>
 
     <!-- Copy XML files from all PackageReferences to output dir -->
     <Target Name="_ResolveCopyLocalNuGetPkgXmls" AfterTargets="ResolveReferences">
         <ItemGroup>
-        <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)'!='' and Exists('%(RootDir)%(Directory)%(Filename).xml')" />
+            <ReferenceCopyLocalPaths Include="@(ReferenceCopyLocalPaths->'%(RootDir)%(Directory)%(Filename).xml')" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)'!='' and Exists('%(RootDir)%(Directory)%(Filename).xml')"/>
         </ItemGroup>
     </Target>
 
     <ItemGroup>
-      <None Remove="**/*.csproj.xml" />
+        <None Remove="**/*.csproj.xml"/>
     </ItemGroup>
-    
+
 </Project>

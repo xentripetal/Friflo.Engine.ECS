@@ -10,59 +10,75 @@ using Friflo.Engine.ECS.Collections;
 // ReSharper disable ConvertToAutoProperty
 namespace Friflo.Editor;
 
-public struct EditorSelection {
+public struct EditorSelection
+{
     public ExplorerItem item;
 }
 
 public abstract class EditorObserver
 {
-#region protected properties
-    protected           EntityStore Store       => appEvents.Store;
-    #endregion
-        
-#region private fields
-    private             bool        editorReadyFired; 
-    private   readonly  AppEvents   appEvents;
+    #region construtor
+
+    protected EditorObserver(AppEvents appEvents) => this.appEvents = appEvents;
+
     #endregion
 
-#region construtor
-    protected EditorObserver(AppEvents appEvents) {
-        this.appEvents = appEvents;
-    }
+    #region protected properties
+
+    protected EntityStore Store => appEvents.Store;
+
     #endregion
-        
-#region events
-    protected virtual   void    OnEditorReady()                                     { }
-    protected virtual   void    OnSelectionChanged(in EditorSelection selection)    { }
-    #endregion
-    
+
     // -------------------------------------- send methods --------------------------------------
-#region send methods
+
+    #region send methods
+
     internal void SendEditorReady()
     {
-        if (editorReadyFired) {
+        if (editorReadyFired)
+        {
             return;
         }
         editorReadyFired = true;
         OnEditorReady();
     }
+
     #endregion
-    
-    
+
+    #region private fields
+
+    private bool editorReadyFired;
+    private readonly AppEvents appEvents;
+
+    #endregion
+
+    #region events
+
+    protected virtual void OnEditorReady() { }
+    protected virtual void OnSelectionChanged(in EditorSelection selection) { }
+
+    #endregion
+
+
     // -------------------------------------- cast methods --------------------------------------
-#region cast methods
+
+    #region cast methods
+
     public static void CastEditorReady(List<EditorObserver> observers)
     {
-        foreach (var observer in observers) {
+        foreach (var observer in observers)
+        {
             observer.SendEditorReady();
         }
     }
-    
+
     internal static void CastSelectionChanged(List<EditorObserver> observers, in EditorSelection selection)
     {
-        foreach (var observer in observers) {
+        foreach (var observer in observers)
+        {
             observer.OnSelectionChanged(selection);
         }
     }
+
     #endregion
 }

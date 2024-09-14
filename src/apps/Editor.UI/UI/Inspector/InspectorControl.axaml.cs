@@ -9,38 +9,40 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class InspectorControl : UserControl
 {
-    internal            InspectorObserver       Observer => observer;
-    
-    internal readonly   InspectorControlModel   model = new InspectorControlModel();
-    private             InspectorObserver       observer;
-    
+    internal readonly InspectorControlModel model = new ();
+
     public InspectorControl()
     {
         DataContext = model;
         InitializeComponent();
-        
-        TagGroup.       GroupAdd.AddSchemaTypes(this, "tags");
-        ComponentGroup. GroupAdd.AddSchemaTypes(this, "components");
-        ScriptGroup.    GroupAdd.AddSchemaTypes(this, "scripts");
+
+        TagGroup.GroupAdd.AddSchemaTypes(this, "tags");
+        ComponentGroup.GroupAdd.AddSchemaTypes(this, "components");
+        ScriptGroup.GroupAdd.AddSchemaTypes(this, "scripts");
         //
-        if (!EditorUtils.IsDesignMode) {
+        if (!EditorUtils.IsDesignMode)
+        {
             Tags.Children.Clear();
             Components.Children.Clear();
             Scripts.Children.Clear();
         }
     }
-    
-    protected override void OnLoaded(RoutedEventArgs e) {
+
+    internal InspectorObserver Observer { get; private set; }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
         base.OnLoaded(e);
         // designer example data
-        if (EditorUtils.IsDesignMode) {
-            model.EntityId          = 123456789;
-            model.TagCount          = 4;
-            model.ComponentCount    = 3;
-            model.ScriptCount       = 1;
+        if (EditorUtils.IsDesignMode)
+        {
+            model.EntityId = 123456789;
+            model.TagCount = 4;
+            model.ComponentCount = 3;
+            model.ScriptCount = 1;
         }
-        var appEvents   = this.GetEditor();
-        observer        = new InspectorObserver(this, appEvents);
-        appEvents?.AddObserver(observer);
+        var appEvents = this.GetEditor();
+        Observer = new InspectorObserver(this, appEvents);
+        appEvents?.AddObserver(Observer);
     }
 }

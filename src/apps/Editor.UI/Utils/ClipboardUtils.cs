@@ -11,26 +11,29 @@ using Friflo.Json.Fliox;
 
 namespace Friflo.Editor.Utils;
 
-internal static class ClipboardUtils
+static class ClipboardUtils
 {
     /// <remarks> Enable GC in caller to collect returned clipboard text if large. </remarks>
-    private static async Task<JsonValue> GetJsonText(Visual visual)
+    async private static Task<JsonValue> GetJsonText(Visual visual)
     {
         var text = await EditorUtils.GetClipboardText(visual);
-        if (text == null) {
+        if (text == null)
+        {
             return default;
         }
         return new JsonValue(Encoding.UTF8.GetBytes(text));
     }
-    
+
     /// <remarks> Enable GC in caller to collect returned JsonValue if large </remarks>
-    internal static async Task<List<DataEntity>> GetDataEntities(Visual visual) {
+    internal async static Task<List<DataEntity>> GetDataEntities(Visual visual)
+    {
         var jsonText = await GetJsonText(visual);
-        if (jsonText.IsNull()) {
+        if (jsonText.IsNull())
+        {
             return null;
         }
-        var result      = new List<DataEntity>();
-        TreeUtils.JsonArrayToDataEntities (jsonText, result);
+        var result = new List<DataEntity>();
+        TreeUtils.JsonArrayToDataEntities(jsonText, result);
         return result;
     }
 }

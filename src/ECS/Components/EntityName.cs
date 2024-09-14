@@ -9,20 +9,19 @@ using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 namespace Friflo.Engine.ECS;
 
 /// <summary>
-/// Can be added to an <see cref="Entity"/> to provide a descriptive name for debugging or in an editor.
+///     Can be added to an <see cref="Entity" /> to provide a descriptive name for debugging or in an editor.
 /// </summary>
 [ComponentKey("name")]
 [ComponentSymbol("N", "0,0,0")]
 public struct EntityName : IComponent
 {
     /// <summary>Descriptive entity name for debugging or in an editor.</summary>
-                    public  string  value;  //  8
-    
-    [Browse(Never)] public  byte[]  Utf8 => value == null ? null : Encoding.UTF8.GetBytes(value);
-    
-    public override         string  ToString() => $"'{value}'";
+    public string value; //  8
 
-    public EntityName (string value) {
-        this.value = value;
-    }
+    [Browse(Never)]
+    public byte[] Utf8 => value == null ? null : Encoding.UTF8.GetBytes(value);
+
+    public override string ToString() => $"'{value}'";
+
+    public EntityName(string value) => this.value = value;
 }

@@ -7,11 +7,9 @@ namespace Friflo.Editor.UI.Explorer;
 
 public readonly struct TreeSelection
 {
-    internal            int             Length => items.Length;
-    
-    internal readonly   ExplorerItem[]  items;
-    
-    internal TreeSelection(ExplorerItem[] items) {
-        this.items  = items;
-    }
+    internal int Length => items.Length;
+
+    internal readonly ExplorerItem[] items;
+
+    internal TreeSelection(ExplorerItem[] items) => this.items = items;
 }

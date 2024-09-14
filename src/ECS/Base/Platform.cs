@@ -6,11 +6,12 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal static class Platform
+static class Platform
 {
     internal static readonly bool IsUnityRuntime = GetIsUnityRuntime();
-        
-    private static bool GetIsUnityRuntime() {
+
+    private static bool GetIsUnityRuntime()
+    {
 #pragma warning disable RS0030
         return Type.GetType("UnityEngine.Application, UnityEngine") != null;
 #pragma warning restore RS0030

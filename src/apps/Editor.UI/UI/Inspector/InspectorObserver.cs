@@ -11,67 +11,70 @@ using Friflo.Engine.ECS;
 // ReSharper disable ParameterTypeCanBeEnumerable.Local
 namespace Friflo.Editor.UI.Inspector;
 
-
-internal readonly struct ComponentItem
+readonly struct ComponentItem
 {
-    internal readonly   InspectorComponent  inspectorComponent;
-    internal readonly   Panel               componentPanel;
-    internal readonly   ComponentField[]    fields;
-    
-    internal ComponentItem(InspectorComponent inspectorComponent, Panel componentPanel, ComponentField[] fields) {
-        this.inspectorComponent = inspectorComponent;
-        this.componentPanel     = componentPanel;
-        this.fields             = fields;
-    }
-} 
+    internal readonly InspectorComponent inspectorComponent;
+    internal readonly Panel componentPanel;
+    internal readonly ComponentField[] fields;
 
-
-internal class InspectorObserver : EditorObserver
-{
-    private readonly    InspectorControl                            inspector;
-    private readonly    Dictionary<TagType,       InspectorTag>     tagMap;
-    private readonly    Dictionary<ComponentType, ComponentItem>    componentMap;
-    private readonly    Dictionary<ScriptType,    ComponentItem>    scriptMap;
-    private readonly    HashSet<Control>                            controlSet;
-    private readonly    List<Control>                               controlList;
-    private readonly    EntitySchema                                schema;
-    private             int                                         entityId;
-    private             SchemaType                                  focusSchemaType;
-    
-    
-    internal InspectorObserver (InspectorControl inspector, AppEvents appEvents) : base (appEvents)
+    internal ComponentItem(InspectorComponent inspectorComponent, Panel componentPanel, ComponentField[] fields)
     {
-        this.inspector  = inspector;
-        tagMap          = new Dictionary<TagType,       InspectorTag>();
-        componentMap    = new Dictionary<ComponentType, ComponentItem>();
-        scriptMap       = new Dictionary<ScriptType,    ComponentItem>();
-        controlSet      = new HashSet<Control>();
-        controlList     = new List<Control>();
-        schema          = EntityStore.GetEntitySchema();
+        this.inspectorComponent = inspectorComponent;
+        this.componentPanel = componentPanel;
+        this.fields = fields;
     }
-    
-    protected override void OnEditorReady() {
+}
+
+class InspectorObserver : EditorObserver
+{
+    private readonly Dictionary<ComponentType, ComponentItem> componentMap;
+    private readonly List<Control> controlList;
+    private readonly HashSet<Control> controlSet;
+    private readonly InspectorControl inspector;
+    private readonly EntitySchema schema;
+    private readonly Dictionary<ScriptType, ComponentItem> scriptMap;
+    private readonly Dictionary<TagType, InspectorTag> tagMap;
+    private int entityId;
+    private SchemaType focusSchemaType;
+
+
+    internal InspectorObserver(InspectorControl inspector, AppEvents appEvents) : base(appEvents)
+    {
+        this.inspector = inspector;
+        tagMap = new Dictionary<TagType, InspectorTag>();
+        componentMap = new Dictionary<ComponentType, ComponentItem>();
+        scriptMap = new Dictionary<ScriptType, ComponentItem>();
+        controlSet = new HashSet<Control>();
+        controlList = new List<Control>();
+        schema = EntityStore.GetEntitySchema();
+    }
+
+    protected override void OnEditorReady()
+    {
         var store = Store;
-        store.OnComponentAdded      += args => PostSetEntity(args.EntityId); 
-        store.OnComponentRemoved    += args => PostSetEntity(args.EntityId); 
-        store.OnTagsChanged         += args => PostSetEntity(args.EntityId);
-        store.OnScriptAdded         += args => PostSetEntity(args.Entity.Id);
-        store.OnScriptRemoved       += args => PostSetEntity(args.Entity.Id); 
-        store.OnEntitiesChanged     += EntitiesChanged;
+        store.OnComponentAdded += args => PostSetEntity(args.EntityId);
+        store.OnComponentRemoved += args => PostSetEntity(args.EntityId);
+        store.OnTagsChanged += args => PostSetEntity(args.EntityId);
+        store.OnScriptAdded += args => PostSetEntity(args.Entity.Id);
+        store.OnScriptRemoved += args => PostSetEntity(args.Entity.Id);
+        store.OnEntitiesChanged += EntitiesChanged;
     }
-    
+
     private void PostSetEntity(int id)
     {
-        if (id != entityId) {
+        if (id != entityId)
+        {
             return;
         }
         StoreDispatcher.Post(() => {
             SetEntity(id);
         });
     }
-    
-    private void EntitiesChanged(object sender, EntitiesChanged args) {
-        if (!args.EntityIds.Contains(entityId)) {
+
+    private void EntitiesChanged(object sender, EntitiesChanged args)
+    {
+        if (!args.EntityIds.Contains(entityId))
+        {
             return;
         }
         // could Post() change event
@@ -80,65 +83,72 @@ internal class InspectorObserver : EditorObserver
 
     protected override void OnSelectionChanged(in EditorSelection selection)
     {
-        var item    = selection.item;
-        if (item == null) {
+        var item = selection.item;
+        if (item == null)
+        {
             return;
         }
-        var entity  = item.Entity;
-        if (entity.IsNull) {
+        var entity = item.Entity;
+        if (entity.IsNull)
+        {
             return;
         }
         SetEntity(entity.Id);
     }
-    
+
     private void SetEntity(int id)
     {
         // Console.WriteLine($"--- Inspector entity: {entity}");
-        entityId                = id;
-        var entity              = Store.GetEntityById(id);
-        var archetype           = entity.Archetype;
-        var model               = inspector.model;
-        model.EntityId          = id;
-        model.TagCount          = archetype.Tags.Count;
-        model.ComponentCount    = archetype.ComponentTypes.Count;
-        model.ScriptCount       = entity.Scripts.Length;
-        
-        SetTags         (entity);
-        SetComponents   (entity);
-        SetScripts      (entity);
-        
+        entityId = id;
+        var entity = Store.GetEntityById(id);
+        var archetype = entity.Archetype;
+        var model = inspector.model;
+        model.EntityId = id;
+        model.TagCount = archetype.Tags.Count;
+        model.ComponentCount = archetype.ComponentTypes.Count;
+        model.ScriptCount = entity.Scripts.Length;
+
+        SetTags(entity);
+        SetComponents(entity);
+        SetScripts(entity);
+
         SetComponentFocus();
     }
-    
-    internal void FocusComponent(SchemaType schemaType) {
+
+    internal void FocusComponent(SchemaType schemaType)
+    {
         focusSchemaType = schemaType;
     }
-    
+
     private void SetComponentFocus()
     {
         var focus = focusSchemaType;
-        if (focus == null) {
+        if (focus == null)
+        {
             return;
         }
         focusSchemaType = null;
-        if (focus is ComponentType componentType) {
+        if (focus is ComponentType componentType)
+        {
             var panel = componentMap[componentType].componentPanel;
             FocusPanel(panel);
             return;
         }
-        if (focus is ScriptType scriptType) {
+        if (focus is ScriptType scriptType)
+        {
             var panel = scriptMap[scriptType].componentPanel;
             FocusPanel(panel);
         }
     }
-    
-    private static void FocusPanel(Panel panel) {
+
+    private static void FocusPanel(Panel panel)
+    {
         StoreDispatcher.Post(() => {
             var focusable = EditorUtils.FindFocusable(panel);
             focusable?.Focus(NavigationMethod.Tab);
         });
     }
-    
+
     private void SetTags(Entity entity)
     {
         var tags = inspector.Tags.Children;
@@ -146,9 +156,14 @@ internal class InspectorObserver : EditorObserver
         var archetype = entity.Archetype;
         foreach (var tagType in archetype.Tags)
         {
-            if (!tagMap.TryGetValue(tagType, out var item)) {
+            if (!tagMap.TryGetValue(tagType, out var item))
+            {
                 var tag = new Tags(tagType);
-                item = new InspectorTag { TagName = tagType.TagName, EntityTag = tag };
+                item = new InspectorTag
+                {
+                    TagName = tagType.TagName,
+                    EntityTag = tag
+                };
                 tagMap.Add(tagType, item);
             }
             item.Entity = entity;
@@ -156,96 +171,109 @@ internal class InspectorObserver : EditorObserver
         }
         inspector.TagGroup.GroupAdd.Entity = entity;
     }
-    
+
     private void SetComponents(Entity entity)
     {
-        var controls    = InitControlSet(inspector.Components.Children);
-        var archetype   = entity.Archetype;
-        
+        var controls = InitControlSet(inspector.Components.Children);
+        var archetype = entity.Archetype;
+
         foreach (var componentType in archetype.ComponentTypes)
         {
-            if (!componentMap.TryGetValue(componentType, out var item)) {
-                var component   = new InspectorComponent { ComponentTitle = componentType.Name, ComponentType = componentType };
-                var panel       = new StackPanel();
-                var fields      = new List<ComponentField>();
+            if (!componentMap.TryGetValue(componentType, out var item))
+            {
+                var component = new InspectorComponent
+                {
+                    ComponentTitle = componentType.Name,
+                    ComponentType = componentType
+                };
+                var panel = new StackPanel();
+                var fields = new List<ComponentField>();
                 ComponentField.AddComponentTypeFields(fields, componentType);
                 AddFields(fields, panel);
                 panel.Children.Add(new Separator());
-                
+
                 // <StackPanel IsVisible="{Binding #Comp1.Expanded}"
                 var expanded = component.GetObservable(InspectorComponent.ExpandedProperty);
                 // ^-- same as: AvaloniaObjectExtensions.GetObservable(component, InspectorComponent.ExpandedProperty);
                 panel.Bind(Visual.IsVisibleProperty, expanded);
-                
+
                 item = new ComponentItem(component, panel, fields.ToArray());
                 componentMap.Add(componentType, item);
-            }          
+            }
             var instance = EntityUtils.GetEntityComponent(entity, componentType); // todo - instance is a struct -> avoid boxing
             ComponentField.SetComponentFields(item.fields, entity, instance);
             item.inspectorComponent.Entity = entity;
-            
+
             controlList.Add(item.inspectorComponent);
             controlList.Add(item.componentPanel);
         }
         inspector.ComponentGroup.GroupAdd.Entity = entity;
         UpdateControls(controls);
     }
-    
+
     private void SetScripts(Entity entity)
     {
         var controls = InitControlSet(inspector.Scripts.Children);
-        
+
         foreach (var script in entity.Scripts)
         {
-            var type        = script.GetType();
-            var scriptType  = schema.ScriptTypeByType[type];
+            var type = script.GetType();
+            var scriptType = schema.ScriptTypeByType[type];
             if (!scriptMap.TryGetValue(scriptType, out var item))
             {
-                var component   = new InspectorComponent { ComponentTitle = type.Name, ScriptType = scriptType };
-                var panel       = new StackPanel();
-                var fields      = new List<ComponentField>();
+                var component = new InspectorComponent
+                {
+                    ComponentTitle = type.Name,
+                    ScriptType = scriptType
+                };
+                var panel = new StackPanel();
+                var fields = new List<ComponentField>();
                 ComponentField.AddScriptFields(fields, null, type);
                 AddFields(fields, panel);
                 panel.Children.Add(new Separator());
                 // <StackPanel IsVisible="{Binding #Comp1.Expanded}"
                 var expanded = component.GetObservable(InspectorComponent.ExpandedProperty);
                 panel.Bind(Visual.IsVisibleProperty, expanded);
-                
+
                 item = new ComponentItem(component, panel, fields.ToArray());
                 scriptMap.Add(scriptType, item);
             }
             ComponentField.SetScriptFields(entity, item.fields, script);
             item.inspectorComponent.Entity = entity;
-            
+
             controlList.Add(item.inspectorComponent);
             controlList.Add(item.componentPanel);
         }
         inspector.ScriptGroup.GroupAdd.Entity = entity;
         UpdateControls(controls);
     }
-    
+
     private static void AddFields(List<ComponentField> fields, Panel panel)
     {
         foreach (var field in fields)
         {
-            var dock    = new DockPanel();
-            if (field.IsLabeled) {
-                dock.Children.Add(new FieldLabel   { Text  = field.name } );
+            var dock = new DockPanel();
+            if (field.IsLabeled)
+            {
+                dock.Children.Add(new FieldLabel
+                {
+                    Text = field.name
+                });
             }
             dock.Children.Add(field.control);
             panel.Children.Add(dock);
         }
     }
-    
+
     private Controls InitControlSet(Controls controls)
     {
         controlList.Clear();
         return controls;
     }
-    
+
     /// <remarks>
-    /// <see cref="controlList"/> items layout
-    /// <code>
+    ///     <see cref="controlList" /> items layout
+    ///     <code>
     ///     [0] InspectorComponent
     ///     [1] Panel
     ///     [2] InspectorComponent
@@ -256,30 +284,39 @@ internal class InspectorObserver : EditorObserver
     private void UpdateControls(Controls controls)
     {
         controlSet.Clear();
-        foreach (var control in controls) {
+        foreach (var control in controls)
+        {
             controlSet.Add(control);
         }
-        InspectorComponent inspectorComponent = null; 
+        InspectorComponent inspectorComponent = null;
         foreach (var control in controlList)
         {
-            bool isInspectorComponent = false;
-            if (control is InspectorComponent component) {
-                inspectorComponent      = component;
-                isInspectorComponent    = true;
+            var isInspectorComponent = false;
+            if (control is InspectorComponent component)
+            {
+                inspectorComponent = component;
+                isInspectorComponent = true;
             }
-            if (control.Parent == null) {
+            if (control.Parent == null)
+            {
                 controls.Add(control);
-            } else {
-                if (isInspectorComponent) {
+            }
+            else
+            {
+                if (isInspectorComponent)
+                {
                     inspectorComponent.IsVisible = true;
-                } else {
+                }
+                else
+                {
                     // case: control is componentPanel
                     control.IsVisible = inspectorComponent!.Expanded;
                 }
             }
             controlSet.Remove(control);
         }
-        foreach (var control in controlSet) {
+        foreach (var control in controlSet)
+        {
             control.IsVisible = false;
         }
     }

@@ -14,7 +14,7 @@ public static partial class EntityExtensions
         return new SignatureIndexes(
             T1: StructInfo<T1>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -23,7 +23,7 @@ public static partial class EntityExtensions
             T1: StructInfo<T1>.Index,
             T2: StructInfo<T2>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -34,7 +34,7 @@ public static partial class EntityExtensions
             T2: StructInfo<T2>.Index,
             T3: StructInfo<T3>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -47,7 +47,7 @@ public static partial class EntityExtensions
             T3: StructInfo<T3>.Index,
             T4: StructInfo<T4>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -62,7 +62,7 @@ public static partial class EntityExtensions
             T4: StructInfo<T4>.Index,
             T5: StructInfo<T5>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5, T6>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -79,7 +79,7 @@ public static partial class EntityExtensions
             T5: StructInfo<T5>.Index,
             T6: StructInfo<T6>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5, T6, T7>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -98,7 +98,7 @@ public static partial class EntityExtensions
             T6: StructInfo<T6>.Index,
             T7: StructInfo<T7>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5, T6, T7, T8>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -119,7 +119,7 @@ public static partial class EntityExtensions
             T7: StructInfo<T7>.Index,
             T8: StructInfo<T8>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5, T6, T7, T8, T9>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent
@@ -142,7 +142,7 @@ public static partial class EntityExtensions
             T8: StructInfo<T8>.Index,
             T9: StructInfo<T9>.Index);
     }
-    
+
     internal static SignatureIndexes GetIndexes<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>()
         where T1 : struct, IComponent
         where T2 : struct, IComponent

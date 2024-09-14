@@ -8,5 +8,5 @@
 
     <TextBlock DockPanel.Dock="Left" Foreground="Black"
                FontSize="14"
-               Text="{Binding $parent[local:ValidationError].Error}"/>
+               Text="{Binding $parent[local:ValidationError].Error}" />
 </UserControl>

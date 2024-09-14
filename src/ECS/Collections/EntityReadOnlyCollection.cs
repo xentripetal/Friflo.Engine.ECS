@@ -9,58 +9,66 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-
 public class EntityReadOnlyCollection : IReadOnlyCollection<Entity>
 {
-#region properties
-    public              int                 Count   => collection.Count;
-    public              EntityStore         Store   => store;
-    
-    public   override   string              ToString()  => $"Entity[{Count}]";
-    #endregion
+    #region general
 
-#region interal fields
-    internal readonly   IReadOnlyCollection<int>    collection; //  8
-    private  readonly   EntityStore                 store;      //  8
-    #endregion
-    
-#region general
-    internal EntityReadOnlyCollection(EntityStore store, IReadOnlyCollection<int> collection) {
+    internal EntityReadOnlyCollection(EntityStore store, IReadOnlyCollection<int> collection)
+    {
         this.collection = collection;
-        this.store      = store;
+        this.store = store;
     }
+
     #endregion
 
-    
-#region IEnumerator
-    public EntityReadOnlyCollectionEnumerator GetEnumerator() => new EntityReadOnlyCollectionEnumerator (this);
-    
+    #region properties
+
+    public int Count => collection.Count;
+    public EntityStore Store => store;
+
+    public override string ToString() => $"Entity[{Count}]";
+
+    #endregion
+
+    #region interal fields
+
+    internal readonly IReadOnlyCollection<int> collection; //  8
+    private readonly EntityStore store; //  8
+
+    #endregion
+
+
+    #region IEnumerator
+
+    public EntityReadOnlyCollectionEnumerator GetEnumerator() => new (this);
+
     // --- IEnumerable
-    IEnumerator                   IEnumerable.GetEnumerator() => new EntityReadOnlyCollectionEnumerator (this);
+    IEnumerator IEnumerable.GetEnumerator() => new EntityReadOnlyCollectionEnumerator(this);
 
     // --- IEnumerable<>
-    IEnumerator<Entity>   IEnumerable<Entity>.GetEnumerator() => new EntityReadOnlyCollectionEnumerator (this);
+    IEnumerator<Entity> IEnumerable<Entity>.GetEnumerator() => new EntityReadOnlyCollectionEnumerator(this);
+
     #endregion
 }
 
-
 public readonly struct EntityReadOnlyCollectionEnumerator : IEnumerator<Entity>
 {
-    private readonly    IEnumerator<int>    enumerator;
-    private readonly    EntityStore         store;
-    
-    internal EntityReadOnlyCollectionEnumerator(EntityReadOnlyCollection entities) {
-        store       = entities.Store;
-        enumerator  = entities.collection.GetEnumerator();
+    private readonly IEnumerator<int> enumerator;
+    private readonly EntityStore store;
+
+    internal EntityReadOnlyCollectionEnumerator(EntityReadOnlyCollection entities)
+    {
+        store = entities.Store;
+        enumerator = entities.collection.GetEnumerator();
     }
-    
+
     // --- IEnumerator<>
-    public   Entity Current     => new Entity(store, enumerator.Current);
-    
+    public Entity Current => new (store, enumerator.Current);
+
     // --- IEnumerator
-    object  IEnumerator.Current => new Entity(store, enumerator.Current);
-    public  bool    MoveNext()  => enumerator.MoveNext();
-    public  void    Reset()     => enumerator.Reset();
-    
-    public  void    Dispose()   => enumerator.Dispose();
+    object IEnumerator.Current => new Entity(store, enumerator.Current);
+    public bool MoveNext() => enumerator.MoveNext();
+    public void Reset() => enumerator.Reset();
+
+    public void Dispose() => enumerator.Dispose();
 }

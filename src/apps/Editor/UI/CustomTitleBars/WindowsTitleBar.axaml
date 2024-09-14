@@ -6,34 +6,34 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CustomTitleBarTemplate.Views.CustomTitleBars.WindowsTitleBar"
              DockPanel.Dock="Top">
-  <StackPanel>
-    <Grid>
-    <!--The proper way would be not to use white as default, but somehow retrieve the users' window chrome color.-->
-      <DockPanel Background="White"
-                 IsHitTestVisible="False"
-                 Name="TitleBarBackground"></DockPanel>
-      <DockPanel Name="TitleBar">
-        <StackPanel Orientation="Horizontal"
-                    DockPanel.Dock="Left"
-                    Spacing="0">
-          <Image Source="/Assets/Avalonia/Images/Icon.ico"
-                 Height="20"
-                 Width="20"
-                 VerticalAlignment="Center"
-                 Margin="5,0,3,0"
-                 Name="WindowIcon"></Image>
-          <NativeMenuBar DockPanel.Dock="Top"
-                         Width="100"
-                         HorizontalAlignment="Left"
-                         Name="SeamlessMenuBar"></NativeMenuBar>
-          <TextBlock Text="Custom TitleBar Demo"
-                     FontSize="12"
-                     Foreground="Black"
-                     VerticalAlignment="Center"
-                     IsHitTestVisible="False"
-                     Name="SystemChromeTitle"></TextBlock>
-        </StackPanel>
-        <!--
+    <StackPanel>
+        <Grid>
+            <!--The proper way would be not to use white as default, but somehow retrieve the users' window chrome color.-->
+            <DockPanel Background="White"
+                       IsHitTestVisible="False"
+                       Name="TitleBarBackground" />
+            <DockPanel Name="TitleBar">
+                <StackPanel Orientation="Horizontal"
+                            DockPanel.Dock="Left"
+                            Spacing="0">
+                    <Image Source="/Assets/Avalonia/Images/Icon.ico"
+                           Height="20"
+                           Width="20"
+                           VerticalAlignment="Center"
+                           Margin="5,0,3,0"
+                           Name="WindowIcon" />
+                    <NativeMenuBar DockPanel.Dock="Top"
+                                   Width="100"
+                                   HorizontalAlignment="Left"
+                                   Name="SeamlessMenuBar" />
+                    <TextBlock Text="Custom TitleBar Demo"
+                               FontSize="12"
+                               Foreground="Black"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False"
+                               Name="SystemChromeTitle" />
+                </StackPanel>
+                <!--
         <StackPanel Height="22" 
 					HorizontalAlignment="Right"
                     Orientation="Horizontal"
@@ -119,9 +119,9 @@
 
         </StackPanel>
         -->
-      </DockPanel>
-    </Grid>
-    <NativeMenuBar HorizontalAlignment="Left"
-                   Name="DefaultMenuBar"></NativeMenuBar>
-  </StackPanel>
+            </DockPanel>
+        </Grid>
+        <NativeMenuBar HorizontalAlignment="Left"
+                       Name="DefaultMenuBar" />
+    </StackPanel>
 </UserControl>

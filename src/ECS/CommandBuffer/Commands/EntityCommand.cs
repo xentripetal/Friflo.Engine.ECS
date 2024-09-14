@@ -4,16 +4,16 @@
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal enum EntityCommandAction
+enum EntityCommandAction
 {
-    Create  = 0,
-    Delete  = 1
+    Create = 0,
+    Delete = 1
 }
 
-internal struct EntityCommand
+struct EntityCommand
 {
-    internal EntityCommandAction    action;     //  4
-    internal int                    entityId;   //  4
+    internal EntityCommandAction action; //  4
+    internal int entityId; //  4
 
     public override string ToString() => $"{action} entity - id: {entityId}";
 }

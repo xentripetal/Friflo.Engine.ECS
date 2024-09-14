@@ -10,19 +10,26 @@ namespace Friflo.Editor.UI.Panels;
 
 public partial class TestPanel : PanelControl
 {
-    public static readonly StyledProperty<bool>   ExplorerProperty  = AP.Register<TestPanel, bool>(nameof(Explorer), true); // todo check exception using true
+    public static readonly StyledProperty<bool> ExplorerProperty = AP.Register<TestPanel, bool>(nameof(Explorer), true); // todo check exception using true
 
-    public  bool  Explorer  { get => GetValue(ExplorerProperty);  set => SetValue(ExplorerProperty, value); }
 
-    
     public TestPanel()
     {
         InitializeComponent();
     }
 
+    public bool Explorer
+    {
+        get => GetValue(ExplorerProperty);
+        set => SetValue(ExplorerProperty, value);
+    }
+
     public void OnButtonClick(object sender, RoutedEventArgs routedEventArgs)
     {
-        ProcessStartInfo sInfo = new ProcessStartInfo("http://localhost:5000") { UseShellExecute = true };
+        var sInfo = new ProcessStartInfo("http://localhost:5000")
+        {
+            UseShellExecute = true
+        };
 #pragma warning disable RS0030
         Process.Start(sInfo);
 #pragma warning restore RS0030

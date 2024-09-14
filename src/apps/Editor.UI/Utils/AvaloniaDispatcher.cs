@@ -10,9 +10,9 @@ namespace Friflo.Editor.Utils;
 
 public class AvaloniaDispatcher : IStoreDispatcher
 {
-    public void          AssertMainThread    ()                             => Dispatcher.UIThread.VerifyAccess();
-    public void          Post                (Action              action)   => Dispatcher.UIThread.Post       (action);
-    public      TResult  Invoke     <TResult>(Func     <TResult>  action)   => Dispatcher.UIThread.Invoke     (action);
-    public Task          InvokeAsync         (Func<Task>          action)   => Dispatcher.UIThread.InvokeAsync(action);
-    public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> action)   => Dispatcher.UIThread.InvokeAsync(action);
+    public void AssertMainThread() => Dispatcher.UIThread.VerifyAccess();
+    public void Post(Action action) => Dispatcher.UIThread.Post(action);
+    public TResult Invoke<TResult>(Func<TResult> action) => Dispatcher.UIThread.Invoke(action);
+    public Task InvokeAsync(Func<Task> action) => Dispatcher.UIThread.InvokeAsync(action);
+    public Task<TResult> InvokeAsync<TResult>(Func<Task<TResult>> action) => Dispatcher.UIThread.InvokeAsync(action);
 }

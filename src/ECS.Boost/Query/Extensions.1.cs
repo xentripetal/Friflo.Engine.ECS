@@ -10,17 +10,19 @@ public static partial class QueryExtensions
         where TEach : IEach<T1>
         where T1 : struct, IComponent
     {
-        foreach (var chunk in query.Chunks) {
+        foreach (var chunk in query.Chunks)
+        {
             chunk.Each(ref each);
         }
         return each;
     }
-    
+
     public static TEachEntity EachEntity<TEachEntity, T1>(this ArchetypeQuery<T1> query, TEachEntity each)
         where TEachEntity : IEachEntity<T1>
         where T1 : struct, IComponent
     {
-        foreach (var chunk in query.Chunks) {
+        foreach (var chunk in query.Chunks)
+        {
             chunk.EachEntity(ref each);
         }
         return each;

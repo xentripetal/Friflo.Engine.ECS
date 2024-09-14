@@ -19,45 +19,58 @@ namespace Friflo.Engine.ECS;
 public partial class EntityStore
 {
 // --------------------------------------- Entity -> DataEntity ---------------------------------------
-#region Entity -> DataEntity
+
+    #region Entity -> DataEntity
+
     internal void EntityToDataEntity(Entity entity, DataEntity dataEntity, ComponentWriter writer, bool pretty)
     {
         ProcessChildren(dataEntity, entity);
-        
+
         // --- write components & scripts
         var jsonComponents = writer.Write(entity, null, pretty);
-        if (!jsonComponents.IsNull()) {
+        if (!jsonComponents.IsNull())
+        {
             JsonUtils.FormatComponents(jsonComponents, ref writer.buffer);
             jsonComponents = new JsonValue(writer.buffer);
         }
         dataEntity.components = new JsonValue(jsonComponents); // create array copy for now
-        
+
         ProcessTags(entity, dataEntity);
     }
 
     private static void ProcessTags(Entity entity, DataEntity dataEntity)
     {
-        var tagCount    = entity.Tags.Count;
-        var tags        = dataEntity.tags;
-        if (tagCount == 0) {
+        var tagCount = entity.Tags.Count;
+        var tags = dataEntity.tags;
+        if (tagCount == 0)
+        {
             tags?.Clear();
-        } else {
-            if (tags == null) {
+        }
+        else
+        {
+            if (tags == null)
+            {
                 tags = dataEntity.tags = new List<string>(tagCount);
-            } else {
+            }
+            else
+            {
                 tags.Clear();
             }
-            foreach (var tag in entity.Tags) {
+            foreach (var tag in entity.Tags)
+            {
                 tags.Add(tag.TagName);
             }
         }
-        if (!entity.TryGetComponent<Unresolved>(out var unresolved)) {
+        if (!entity.TryGetComponent<Unresolved>(out var unresolved))
+        {
             return;
         }
         var unresolvedTags = unresolved.tags;
-        if (unresolvedTags != null) {
+        if (unresolvedTags != null)
+        {
             tags ??= dataEntity.tags = new List<string>(unresolvedTags.Length);
-            foreach (var tag in unresolvedTags) {
+            foreach (var tag in unresolvedTags)
+            {
                 tags.Add(tag);
             }
         }
@@ -67,60 +80,75 @@ public partial class EntityStore
     {
         var children = dataEntity.children;
         var childEntities = entity.ChildEntities;
-        if (childEntities.Count > 0) {
-            if (children == null) {
+        if (childEntities.Count > 0)
+        {
+            if (children == null)
+            {
                 children = dataEntity.children = new List<long>(childEntities.Count);
-            } else {
+            }
+            else
+            {
                 children.Clear();
             }
-            foreach (var child in childEntities) {
+            foreach (var child in childEntities)
+            {
                 var pid = IdToPid(child.Id);
                 children.Add(pid);
             }
-        } else {
+        }
+        else
+        {
             dataEntity.children?.Clear();
         }
     }
+
     #endregion
-    
+
 // --------------------------------------- DataEntity -> Entity ---------------------------------------
-#region DataEntity -> Entity
+
+    #region DataEntity -> Entity
 
     internal Entity DataEntityToEntity(DataEntity dataEntity, out string error, ComponentReader reader, in ConvertOptions options)
     {
-        if (dataEntity == null) {
+        if (dataEntity == null)
+        {
             throw new ArgumentNullException(nameof(dataEntity));
         }
         Entity entity;
-        if (intern.pidType == PidType.UsePidAsId) {
+        if (intern.pidType == PidType.UsePidAsId)
+        {
             entity = CreateFromDataEntityUsePidAsId(dataEntity);
-        } else {
-            entity = CreateFromDataEntityRandomPid (dataEntity);
+        }
+        else
+        {
+            entity = CreateFromDataEntityRandomPid(dataEntity);
         }
         error = reader.Read(dataEntity, entity, this, options);
         return entity;
     }
-    
+
     private Entity CreateFromDataEntityRandomPid(DataEntity dataEntity)
     {
         // --- map pid to id
-        var pid     = dataEntity.pid;
-        var pid2Id  = extension.pid2Id;
-        var id2Pid  = extension.id2Pid;
-        if (!pid2Id.TryGetValue(pid, out int id)) {
+        var pid = dataEntity.pid;
+        var pid2Id = extension.pid2Id;
+        var id2Pid = extension.id2Pid;
+        if (!pid2Id.TryGetValue(pid, out var id))
+        {
             id = NewId();
             pid2Id.Add(pid, id);
             id2Pid.Add(id, pid);
         }
         // --- map children pid's to id's
-        var children    = dataEntity.children;
-        var childCount  = children?.Count ?? 0;
+        var children = dataEntity.children;
+        var childCount = children?.Count ?? 0;
         EnsureIdBufferCapacity(childCount);
-        Span<int> ids   = new (idBuffer, 0, childCount);
-        for (int n = 0; n < childCount; n++)
+        Span<int> ids = new (idBuffer, 0, childCount);
+        for (var n = 0; n < childCount; n++)
         {
             var childPid = children![n];
-            if (!pid2Id.TryGetValue(childPid, out int childId)) {
+            if (!pid2Id.TryGetValue(childPid, out var childId))
+            {
                 childId = NewId();
                 pid2Id.Add(childPid, childId);
                 id2Pid.Add(childId, childPid);
@@ -131,49 +159,55 @@ public partial class EntityStore
         EnsureNodesLength(intern.sequenceId + 1);
         CreateEntityNode(defaultArchetype, id, out var revision);
 
-        var entity = new Entity(this, id, revision); 
+        var entity = new Entity(this, id, revision);
         SetChildNodes(entity, ids);
         return entity;
     }
-    
+
     private Entity CreateFromDataEntityUsePidAsId(DataEntity dataEntity)
     {
         var pid = dataEntity.pid;
-        if (pid < Static.MinNodeId || pid > int.MaxValue) {
+        if (pid < Static.MinNodeId || pid > int.MaxValue)
+        {
             throw PidOutOfRangeException(pid, $"{nameof(DataEntity)}.{nameof(dataEntity.pid)}");
         }
-        var id          = (int)pid;
+        var id = (int)pid;
         // --- use pid's as id's
-        var maxId       = id;
-        var children    = dataEntity.children;
-        var childCount  = children?.Count ?? 0; 
+        var maxId = id;
+        var children = dataEntity.children;
+        var childCount = children?.Count ?? 0;
         EnsureIdBufferCapacity(childCount);
-        Span<int> ids   = new (idBuffer, 0, childCount);
-        for (int n = 0; n < childCount; n++)
+        Span<int> ids = new (idBuffer, 0, childCount);
+        for (var n = 0; n < childCount; n++)
         {
             var childId = children![n];
-            if (childId < Static.MinNodeId || childId > int.MaxValue) {
+            if (childId < Static.MinNodeId || childId > int.MaxValue)
+            {
                 throw PidOutOfRangeException(childId, $"{nameof(DataEntity)}.{nameof(dataEntity.children)}");
             }
             ids[n] = (int)childId;
         }
-        foreach (var childId in ids) {
+        foreach (var childId in ids)
+        {
             maxId = Math.Max(maxId, childId);
         }
         // Assign pid: assign no pid. intern.pidType == PidType.UsePidAsId 
         EnsureNodesLength(maxId + 1);
         CreateEntityNode(defaultArchetype, id, out var revision);
-        
+
         var entity = new Entity(this, id, revision);
         SetChildNodes(entity, ids);
         return entity;
     }
-    
-    private void EnsureIdBufferCapacity(int count) {
-        if (idBuffer.Length >= count) {
+
+    private void EnsureIdBufferCapacity(int count)
+    {
+        if (idBuffer.Length >= count)
+        {
             return;
         }
         ArrayUtils.Resize(ref idBuffer, Math.Max(2 * idBuffer.Length, count));
     }
+
     #endregion
 }

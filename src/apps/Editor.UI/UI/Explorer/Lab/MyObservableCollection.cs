@@ -8,7 +8,7 @@ using System.Text;
 namespace Friflo.Editor.UI.Explorer.Lab;
 
 /// <summary>
-/// Sample assigning an event handler to <see cref="ObservableCollection{T}.PropertyChanged"/> 
+///     Sample assigning an event handler to <see cref="ObservableCollection{T}.PropertyChanged" />
 /// </summary>
 public class MyObservableCollection<T> : ObservableCollection<T>
 {
@@ -20,11 +20,17 @@ public class MyObservableCollection<T> : ObservableCollection<T>
             var name = args.PropertyName;
             sb.Append(name);
             sb.Append(" = ");
-            switch (name) {
-                case "Count":   sb.Append(Count); break;
-                case "Item[]":  sb.Append(Count); break;
+            switch (name)
+            {
+                case "Count":
+                    sb.Append(Count);
+                    break;
+
+                case "Item[]":
+                    sb.Append(Count);
+                    break;
             }
             Console.WriteLine(sb.ToString());
-        }; 
+        };
     }
 }

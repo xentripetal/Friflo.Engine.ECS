@@ -10,12 +10,16 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class FieldLabel : UserControl
 {
-    public static readonly StyledProperty<string>   TextProperty  = AP.Register<FieldLabel, string>(nameof(Text), "name");
-    
-    public string   Text  { get => GetValue(TextProperty);  set => SetValue(TextProperty, value); }
-    
+    public static readonly StyledProperty<string> TextProperty = AP.Register<FieldLabel, string>(nameof(Text), "name");
+
     public FieldLabel()
     {
         InitializeComponent();
+    }
+
+    public string Text
+    {
+        get => GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
     }
 }

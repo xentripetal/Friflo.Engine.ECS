@@ -11,52 +11,59 @@ using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 namespace Friflo.Engine.ECS;
 
 /// <summary>
-/// Return the <see cref="Script"/>'s added to an <see cref="Entity"/>.
+///     Return the <see cref="Script" />'s added to an <see cref="Entity" />.
 /// </summary>
 public struct EntityScripts : IEnumerable<Script>
 {
-#region public properties
-    /// <summary>Return the number of <see cref="Script"/>'s of an entity.</summary>
-    public              int                     Count       => scripts.Length;
-    
-    public   override   string                  ToString()  => GetString();
-    #endregion
-    
-#region internal fields
-                    internal readonly   int         id;         //  4   - entity containing the scripts
-    /// <summary>
-    /// Invariant:<br/>
-    /// <see cref="id"/> == 0   :   <see cref="scripts"/> == null<br/>
-    /// <see cref="id"/>  > 0   :   <see cref="scripts"/> != null  <b>and</b> its Length > 0 
-    /// </summary>
-    [Browse(Never)] internal            Script[]    scripts;    //  8   - scripts contained by an entity
-    #endregion
-    
+    #region public properties
 
-    internal EntityScripts (int id, Script[] scripts)
+    /// <summary>Return the number of <see cref="Script" />'s of an entity.</summary>
+    public int Count => scripts.Length;
+
+    public override string ToString() => GetString();
+
+    #endregion
+
+    #region internal fields
+
+    internal readonly int id; //  4   - entity containing the scripts
+    /// <summary>
+    ///     Invariant:<br />
+    ///     <see cref="id" /> == 0   :   <see cref="scripts" /> == null<br />
+    ///     <see cref="id" />  > 0   :   <see cref="scripts" /> != null  <b>and</b> its Length > 0
+    /// </summary>
+    [Browse(Never)]
+    internal Script[] scripts; //  8   - scripts contained by an entity
+
+    #endregion
+
+
+    internal EntityScripts(int id, Script[] scripts)
     {
-        this.id         = id;
-        this.scripts    = scripts;
+        this.id = id;
+        this.scripts = scripts;
     }
-    
-    public readonly EntityScriptsEnumerator GetEnumerator()                     => new EntityScriptsEnumerator (scripts);
+
+    public readonly EntityScriptsEnumerator GetEnumerator() => new (scripts);
 
     // --- IEnumerable
-    readonly        IEnumerator             IEnumerable.GetEnumerator()         => new EntityScriptsEnumerator (scripts);
+    readonly IEnumerator IEnumerable.GetEnumerator() => new EntityScriptsEnumerator(scripts);
 
     // --- IEnumerable<>
-    readonly        IEnumerator<Script>     IEnumerable<Script>.GetEnumerator() => new EntityScriptsEnumerator (scripts);
-    
+    readonly IEnumerator<Script> IEnumerable<Script>.GetEnumerator() => new EntityScriptsEnumerator(scripts);
+
     private string GetString()
     {
-        if (scripts == null) {
+        if (scripts == null)
+        {
             return "unused";
         }
         var sb = new StringBuilder();
         sb.Append("id: ");
         sb.Append(id);
         sb.Append("  [");
-        foreach (var script in scripts) {
+        foreach (var script in scripts)
+        {
             sb.Append('*');
             sb.Append(script.GetType().Name);
             sb.Append(", ");
@@ -68,27 +75,30 @@ public struct EntityScripts : IEnumerable<Script>
 }
 
 /// <summary>
-/// Used to enumerate the <see cref="Script"/>'s added to an <see cref="Entity"/>.
+///     Used to enumerate the <see cref="Script" />'s added to an <see cref="Entity" />.
 /// </summary>
 public struct EntityScriptsEnumerator : IEnumerator<Script>
 {
-    private             int         index;
-    private readonly    Script[]    scripts;
-    
+    private int index;
+    private readonly Script[] scripts;
+
     // --- IEnumerator
-    public          void            Reset()             { index = 0; }
-
-    readonly        object          IEnumerator.Current => Current;
-
-    public readonly Script          Current             => scripts[index - 1];
-    
-    internal EntityScriptsEnumerator(Script[] scripts) {
-        this.scripts    = scripts;
+    public void Reset()
+    {
+        index = 0;
     }
-    
+
+    readonly object IEnumerator.Current => Current;
+
+    public readonly Script Current => scripts[index - 1];
+
+    internal EntityScriptsEnumerator(Script[] scripts) => this.scripts = scripts;
+
     // --- IEnumerator
-    public bool MoveNext() {
-        if (index < scripts.Length) {
+    public bool MoveNext()
+    {
+        if (index < scripts.Length)
+        {
             index++;
             return true;
         }
@@ -96,4 +106,4 @@ public struct EntityScriptsEnumerator : IEnumerator<Script>
     }
 
     public readonly void Dispose() { }
-} 
+}

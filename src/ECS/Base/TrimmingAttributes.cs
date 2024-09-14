@@ -6,8 +6,7 @@
 
 // ReSharper disable once EmptyNamespace
 // ReSharper disable once CheckNamespace
-namespace System.Diagnostics.CodeAnalysis
-{
+namespace System.Diagnostics.CodeAnalysis;
 #if !NET7_0_OR_GREATER
     /// <summary>
     /// Indicates that the specified method requires the ability to generate new code at runtime,
@@ -421,4 +420,3 @@ namespace System.Diagnostics.CodeAnalysis
         All = ~None
     }
 #endif
-}

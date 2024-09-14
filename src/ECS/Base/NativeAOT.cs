@@ -14,36 +14,37 @@ namespace Friflo.Engine.ECS;
 // ReSharper disable once InconsistentNaming
 public sealed class NativeAOT
 {
-    private             EntitySchema                entitySchema;
-    private             bool                        engineTypesRegistered;
-        
-    private readonly    HashSet<Type>               typeSet     = new();
-    private readonly    TypeStore                   typeStore   = new TypeStore();
-    private readonly    SchemaTypes                 schemaTypes = new();
-    private readonly    Dictionary<Assembly, int>   assemblyMap = new();
-    private readonly    List<Assembly>              assemblies  = new();
-    
-    private static      NativeAOT           Instance;
-    
+    private static NativeAOT Instance;
+    private readonly List<Assembly> assemblies = new ();
+    private readonly Dictionary<Assembly, int> assemblyMap = new ();
+    private readonly SchemaTypes schemaTypes = new ();
+
+    private readonly HashSet<Type> typeSet = new ();
+    private readonly TypeStore typeStore = new ();
+    private bool engineTypesRegistered;
+    private EntitySchema entitySchema;
+
     [ExcludeFromCodeCoverage]
     internal static EntitySchema GetSchema()
     {
         var schema = Instance?.entitySchema;
-        if (schema != null) {
+        if (schema != null)
+        {
             return schema;
         }
         return CreateDefaultSchema();
     }
-    
+
     [ExcludeFromCodeCoverage]
     private static EntitySchema CreateDefaultSchema()
     {
         var schema = Instance?.entitySchema;
-        if (schema != null) {
+        if (schema != null)
+        {
             return schema;
         }
         var msg =
-@"EntitySchema not created.
+            @"EntitySchema not created.
 NativeAOT requires schema creation on startup:
 1. Create NativeAOT instance:   var aot = new NativeAOT();
 2. Register types with:         aot.Register...(); 
@@ -54,10 +55,10 @@ NativeAOT requires schema creation on startup:
         return aot.CreateSchemaInternal();
 /*  Return default schema instead of throwing an exception.
     By doing this subsequent access to components, tags & script result in meaningful stack traces.
-    
+
     Throwing an exception is not helpful.
     E.g. the exception is thrown from within a constructor - like EntityStore(). In this case the exception log looks like:
-        
+
 A type initializer threw an exception. To determine which type, inspect the InnerException's StackTrace property.
    Stack Trace:
    at System.Runtime.CompilerServices.ClassConstructorRunner.EnsureClassConstructorRun(StaticClassConstructionContext*) + 0x247
@@ -68,29 +69,31 @@ A type initializer threw an exception. To determine which type, inspect the Inne
    at Friflo.Engine.ECS.EntityStore..ctor() + 0x1a
 */
     }
-    
+
     private EntitySchema CreateSchemaInternal()
     {
         InitSchema();
 
-        var dependants  = schemaTypes.CreateSchemaTypes(typeStore, assemblies);
-        entitySchema    = new EntitySchema(dependants, schemaTypes);
-        Instance        = this;
+        var dependants = schemaTypes.CreateSchemaTypes(typeStore, assemblies);
+        entitySchema = new EntitySchema(dependants, schemaTypes);
+        Instance = this;
         return entitySchema;
     }
-    
+
     public EntitySchema CreateSchema()
     {
         Console.WriteLine("NativeAOT.CreateSchema()");
         return CreateSchemaInternal();
     }
-    
+
     private void InitSchema()
     {
-        if (Instance?.entitySchema != null) {
+        if (Instance?.entitySchema != null)
+        {
             throw new InvalidOperationException("EntitySchema already created");
         }
-        if (engineTypesRegistered) {
+        if (engineTypesRegistered)
+        {
             return;
         }
         engineTypesRegistered = true;
@@ -106,42 +109,46 @@ A type initializer threw an exception. To determine which type, inspect the Inne
 
         RegisterTag<Disabled>();
     }
-    
+
     private void AddType(Type type, SchemaTypeKind kind)
     {
         var assembly = type.Assembly;
-        if (!assemblyMap.TryGetValue(assembly, out int assemblyIndex)) {
+        if (!assemblyMap.TryGetValue(assembly, out var assemblyIndex))
+        {
             assemblyIndex = assemblies.Count;
             assemblyMap.Add(assembly, assemblyIndex);
             assemblies.Add(assembly);
         }
         schemaTypes.AddSchemaType(new AssemblyType(type, kind, assemblyIndex));
     }
-    
-    public void RegisterComponent<T>() where T : struct, IComponent 
+
+    public void RegisterComponent<T>() where T : struct, IComponent
     {
         InitSchema();
-        if (typeSet.Add(typeof(T))) {
+        if (typeSet.Add(typeof(T)))
+        {
             AddType(typeof(T), SchemaTypeKind.Component);
             SchemaUtils.CreateComponentType<T>(typeStore, 0, null, null, null, null); // dummy call to prevent trimming required type info
         }
     }
-    
-    public void RegisterTag<T>()  where T : struct, ITag 
+
+    public void RegisterTag<T>() where T : struct, ITag
     {
         InitSchema();
-        if (typeSet.Add(typeof(T))) {
+        if (typeSet.Add(typeof(T)))
+        {
             AddType(typeof(T), SchemaTypeKind.Tag);
-            SchemaUtils.CreateTagType<T>(0);                        // dummy call to prevent trimming required type info
+            SchemaUtils.CreateTagType<T>(0); // dummy call to prevent trimming required type info
         }
     }
-    
-    public void RegisterScript<T>()  where T : Script, new()
+
+    public void RegisterScript<T>() where T : Script, new()
     {
         InitSchema();
-        if (typeSet.Add(typeof(T))) {
+        if (typeSet.Add(typeof(T)))
+        {
             AddType(typeof(T), SchemaTypeKind.Script);
-            SchemaUtils.CreateScriptType<T>(typeStore, 0);          // dummy call to prevent trimming required type info
+            SchemaUtils.CreateScriptType<T>(typeStore, 0); // dummy call to prevent trimming required type info
         }
     }
 }

@@ -7,30 +7,32 @@
 namespace Friflo.Engine.ECS;
 
 /// <summary>
-/// Is the event for event handlers added to <see cref="EntityStore.OnEntityDelete"/>.
+///     Is the event for event handlers added to <see cref="EntityStore.OnEntityDelete" />.
 /// </summary>
 /// <remarks>
-/// These events are fired on <see cref="ECS.Entity.DeleteEntity"/>.
+///     These events are fired on <see cref="ECS.Entity.DeleteEntity" />.
 /// </remarks>
-public readonly struct  EntityDelete
+public readonly struct EntityDelete
 {
-#region fields
+    #region fields
+
     /// <summary>The entity that will be deleted.</summary>
-    public  readonly    Entity      Entity;         // 16
+    public readonly Entity Entity; // 16
 
     #endregion
-    
-#region properties
-    /// <summary>The <see cref="EntityStore"/> of the entity that will be deleted.</summary>
-    public              EntityStore Store       => Entity.store;
-    
-    public override     string      ToString()  => $"entity: {Entity.Id} - event > EntityDelete";
+
+    #region properties
+
+    /// <summary>The <see cref="EntityStore" /> of the entity that will be deleted.</summary>
+    public EntityStore Store => Entity.store;
+
+    public override string ToString() => $"entity: {Entity.Id} - event > EntityDelete";
+
     #endregion
 
-#region methods
-    internal EntityDelete(Entity entity)
-    {
-        Entity = entity;
-    }
+    #region methods
+
+    internal EntityDelete(Entity entity) => Entity = entity;
+
     #endregion
 }

@@ -4,18 +4,16 @@ using static NUnit.Framework.Assert;
 
 // ReSharper disable UseObjectOrCollectionInitializer
 // ReSharper disable InconsistentNaming
-namespace Internal.Client {
-
-public static class Test_Client
+namespace Internal.Client
 {
-    
-    /// <summary>cover <see cref="ReadResult.ToString"/></summary>
-    [Test]
-    public static void Test_Client_ReadEntitiesResult_ToString()
+    public static class Test_Client
     {
-        var result = new ReadResult(2, "test error");
-        AreEqual("entityCount: 2 error: test error", result.ToString());
+        /// <summary>cover <see cref="ReadResult.ToString" /></summary>
+        [Test]
+        public static void Test_Client_ReadEntitiesResult_ToString()
+        {
+            var result = new ReadResult(2, "test error");
+            AreEqual("entityCount: 2 error: test error", result.ToString());
+        }
     }
-}
-
 }

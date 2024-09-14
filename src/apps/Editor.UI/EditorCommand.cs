@@ -5,5 +5,4 @@
 namespace Friflo.Editor;
 
 public abstract class EditorCommand { }
-
 public sealed class CopyToClipboardCommand : EditorCommand { }

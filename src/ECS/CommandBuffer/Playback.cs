@@ -8,33 +8,31 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-
-internal struct EntityChange
+struct EntityChange
 {
-    internal            ComponentTypes                  componentTypes; // 32 
-    internal            Tags                            tags;           // 32
-    internal            Archetype                       oldArchetype;   //  8
-    internal            int                             entityId;       //  4
+    internal ComponentTypes componentTypes; // 32 
+    internal Tags tags; // 32
+    internal Archetype oldArchetype; //  8
+    internal int entityId; //  4
 }
 
-internal class Playback
+class Playback
 {
     /// <summary>
-    /// Store indexes into <see cref="entityChanges"/> instead the <see cref="EntityChange"/> value directly.<br/>
-    /// Size of <see cref="EntityChange"/> is too big (96 bytes) which degrade performance when rehashing Dictionary.
-    /// </summary> 
-    internal readonly   Dictionary<int, int>            entityChangesIndexes;   //  8
-    internal            EntityChange[]                  entityChanges;          //  8
-    internal            int                             entityChangesCount;     //  4
-    internal readonly   EntityStore                     store;                  //  8
-    
-    internal Playback(EntityStore store) {
-        this.store              = store;
-        entityChangesIndexes    = new Dictionary<int, int>();
-        entityChanges           = Array.Empty<EntityChange>();
+    ///     Store indexes into <see cref="entityChanges" /> instead the <see cref="EntityChange" /> value directly.<br />
+    ///     Size of <see cref="EntityChange" /> is too big (96 bytes) which degrade performance when rehashing Dictionary.
+    /// </summary>
+    internal readonly Dictionary<int, int> entityChangesIndexes; //  8
+    internal readonly EntityStore store; //  8
+    internal EntityChange[] entityChanges; //  8
+    internal int entityChangesCount; //  4
+
+    internal Playback(EntityStore store)
+    {
+        this.store = store;
+        entityChangesIndexes = new Dictionary<int, int>();
+        entityChanges = Array.Empty<EntityChange>();
     }
-    
-    public EntityChange[] ResizeChanges() {
-        return ArrayUtils.Resize(ref entityChanges, Math.Max(8, 2 * entityChanges.Length));
-    }
+
+    public EntityChange[] ResizeChanges() => ArrayUtils.Resize(ref entityChanges, Math.Max(8, 2 * entityChanges.Length));
 }

@@ -7,18 +7,19 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS.Index;
 
-internal sealed class ValueInRangeCondition<TComponent, TValue> : ValueCondition
+sealed class ValueInRangeCondition<TComponent, TValue> : ValueCondition
     where TComponent : struct, IIndexedComponent<TValue>
-    where TValue     : IComparable<TValue>
+    where TValue : IComparable<TValue>
 {
-    private readonly TValue min;
     private readonly TValue max;
-    
-    internal ValueInRangeCondition(TValue min, TValue max) {
+    private readonly TValue min;
+
+    internal ValueInRangeCondition(TValue min, TValue max)
+    {
         this.min = min;
         this.max = max;
     }
-    
+
     internal override void AddMatchingEntities(EntityStore store, HashSet<int> idSet)
     {
         var index = (ComponentIndex<TValue>)StoreIndex.GetIndex(store, StructInfo<TComponent>.Index);

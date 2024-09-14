@@ -1,18 +1,19 @@
 using System.Numerics;
 using NUnit.Framework;
 
-namespace Tests.SIMD {
-
-public static class VectorTest
+namespace Tests.SIMD
 {
-    [Test]
-    public static void Test_Vector() {
-        var v1 = new Vector2(0.1f, 0.2f);
-        var v2 = new Vector2(1.1f, 2.2f);
-        var vResult = v1 + v2;
-        Assert.AreEqual(new Vector2(1.2f, 2.4f), vResult);
+    public static class VectorTest
+    {
+        [Test]
+        public static void Test_Vector()
+        {
+            var v1 = new Vector2(0.1f, 0.2f);
+            var v2 = new Vector2(1.1f, 2.2f);
+            var vResult = v1 + v2;
+            Assert.AreEqual(new Vector2(1.2f, 2.4f), vResult);
+        }
     }
-}
 /*
 [ExcludeFromCodeCoverage]
 public static class MyExtensions
@@ -44,9 +45,9 @@ public static class MyExtensions
         {
             var sumVector = Vector<T>.Zero; // initialize to zeros
 
-            // cast the span to a span of vectors  
-            var vectors = MemoryMarshal.Cast<T, Vector<T>>(source);   
- 
+            // cast the span to a span of vectors
+            var vectors = MemoryMarshal.Cast<T, Vector<T>>(source);
+
             // add each vector to the sum vector
             foreach (ref readonly var vector in vectors) {
                 sumVector += vector;

@@ -12,31 +12,32 @@ namespace Friflo.Editor.UI.Panels;
 
 public partial class ExplorerPanel : PanelControl
 {
-    public override string ToString() => Grid.RootItem.DebugTreeName;
-    
-    public ExplorerTreeDataGrid TreeDataGrid => Grid;
-
     public ExplorerPanel()
     {
         InitializeComponent();
-        var viewModel           = new MainWindowViewModel();
-        DataContext             = viewModel;
+        var viewModel = new MainWindowViewModel();
+        DataContext = viewModel;
         DockPanel.ContextFlyout = new ExplorerFlyout(Grid);
     }
+
+    public ExplorerTreeDataGrid TreeDataGrid => Grid;
+    public override string ToString() => Grid.RootItem.DebugTreeName;
 
     private void DragDrop_OnRowDragStarted(object sender, TreeDataGridRowDragStartedEventArgs e)
     {
         foreach (ExplorerItem item in e.Models)
         {
-            if (!item.AllowDrag) {
+            if (!item.AllowDrag)
+            {
                 e.AllowedEffects = DragDropEffects.None;
             }
         }
     }
-    
+
     public override bool OnExecuteCommand(EditorCommand command)
     {
-        switch (command) {
+        switch (command)
+        {
             case CopyToClipboardCommand:
                 ExplorerCommands.CopyItems(Grid.GetSelection(), Grid);
                 return true;
@@ -49,10 +50,12 @@ public partial class ExplorerPanel : PanelControl
         // Console.WriteLine($"OnRowDragOver: {e.Position} {e.TargetRow.Model}");
         if (e.TargetRow.Model is ExplorerItem explorerItem)
         {
-            if (!explorerItem.IsRoot) {
+            if (!explorerItem.IsRoot)
+            {
                 return;
             }
-            if (e.Position == TreeDataGridRowDropPosition.Inside) {
+            if (e.Position == TreeDataGridRowDropPosition.Inside)
+            {
                 return;
             }
         }

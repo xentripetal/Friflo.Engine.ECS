@@ -7,25 +7,28 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal struct StackArray<T>
+struct StackArray<T>
 {
-#region properties
-    internal        int     Count       => count;
-    public override string  ToString()  => $"Count: {count}";
+    #region properties
+
+    internal int Count => count;
+    public override string ToString() => $"Count: {count}";
+
     #endregion
 
-#region fields
-    private         T[]     items;  //  8
-    private         int     count;  //  4
+    #region fields
+
+    private T[] items; //  8
+    private int count; //  4
+
     #endregion
 
-    internal StackArray(T[] items) {
-        this.items = items;
-    }
-    
+    internal StackArray(T[] items) => this.items = items;
+
     internal bool TryPop(out T item)
     {
-        if (count > 0) {
+        if (count > 0)
+        {
             item = items[--count];
             items[count] = default;
             return true;
@@ -33,22 +36,25 @@ internal struct StackArray<T>
         item = default;
         return false;
     }
-    
+
     internal void Push(in T item)
     {
-        int curCount    = count;
-        var curItems    = items;
-        if (curCount == curItems.Length) {
+        var curCount = count;
+        var curItems = items;
+        if (curCount == curItems.Length)
+        {
             curItems = ArrayUtils.Resize(ref items, Math.Max(4, 2 * curCount));
         }
         curItems[curCount] = item;
         count = curCount + 1;
     }
-    
-    internal void Clear() {
-        var end         = count;
-        var curItems    = items;
-        for (int n = 0; n < end; n++) {
+
+    internal void Clear()
+    {
+        var end = count;
+        var curItems = items;
+        for (var n = 0; n < end; n++)
+        {
             curItems[n] = default;
         }
         count = 0;

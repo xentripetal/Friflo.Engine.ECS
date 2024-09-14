@@ -9,34 +9,34 @@
 
     <Grid HorizontalAlignment="Stretch" Height="22"
           ColumnDefinitions="15, *, 15, *, 15, *" RowDefinitions="*">
-        
-        <TextBlock  Grid.Row="0" Grid.Column="0" 
-                    VerticalAlignment="Center" Margin="2 1 0 0"
-                    Text="x"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   VerticalAlignment="Center" Margin="2 1 0 0"
+                   Text="x" />
         <DockPanel Grid.Row="0" Grid.Column="1">
-            <Border     Background="Red" Classes="PositionBorder"/>
-            <TextBox    MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
-                        Text="{Binding $parent[local:Vector3Field].X}"/>
-        </DockPanel>
-        
-        <TextBlock  Grid.Row="0" Grid.Column="2" 
-                    VerticalAlignment="Center" Margin="2 1 0 0"
-                    Text="y"/>
-        <DockPanel Grid.Row="0" Grid.Column="3">
-            <Border     Background="Green" Classes="PositionBorder"/>
-            <TextBox    MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
-                        Text="{Binding $parent[local:Vector3Field].Y}"/>
+            <Border Background="Red" Classes="PositionBorder" />
+            <TextBox MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
+                     Text="{Binding $parent[local:Vector3Field].X}" />
         </DockPanel>
 
-        <TextBlock  Grid.Row="0" Grid.Column="4" 
-                    VerticalAlignment="Center" Margin="2 1 0 0"
-                    Text="z"/>
-        <DockPanel Grid.Row="0" Grid.Column="5">
-            <Border     Background="Blue" Classes="PositionBorder"/>
-            <TextBox    MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
-                        Text="{Binding $parent[local:Vector3Field].Z}"/>
+        <TextBlock Grid.Row="0" Grid.Column="2"
+                   VerticalAlignment="Center" Margin="2 1 0 0"
+                   Text="y" />
+        <DockPanel Grid.Row="0" Grid.Column="3">
+            <Border Background="Green" Classes="PositionBorder" />
+            <TextBox MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
+                     Text="{Binding $parent[local:Vector3Field].Y}" />
         </DockPanel>
-       
+
+        <TextBlock Grid.Row="0" Grid.Column="4"
+                   VerticalAlignment="Center" Margin="2 1 0 0"
+                   Text="z" />
+        <DockPanel Grid.Row="0" Grid.Column="5">
+            <Border Background="Blue" Classes="PositionBorder" />
+            <TextBox MinWidth="1" HorizontalAlignment="Stretch" Classes="EditField PositionEdit"
+                     Text="{Binding $parent[local:Vector3Field].Z}" />
+        </DockPanel>
+
     </Grid>
 
 </UserControl>

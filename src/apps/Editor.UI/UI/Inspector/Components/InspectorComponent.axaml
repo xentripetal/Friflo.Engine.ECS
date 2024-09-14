@@ -11,18 +11,17 @@
             <DockPanel>
                 <Border Width="20" DockPanel.Dock="Left">
                     <ToggleButton Margin="4 0 0 0" Height="14" Width="14" FontSize="4"
-                                  IsChecked="{Binding $parent[local:InspectorComponent].Expanded}">
-                    </ToggleButton>
+                                  IsChecked="{Binding $parent[local:InspectorComponent].Expanded}" />
                 </Border>
                 <Border Margin="0 0 18 0"
                         DockPanel.Dock="Right">
                     <Button Background="{DynamicResource ComponentBackground}"
-                            Content="..." 
+                            Content="..."
                             BorderThickness="0" CornerRadius="2"
                             Margin="0 1" Padding="3 1">
                         <Button.Flyout>
                             <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                <MenuItem Header="Remove" Click="MenuItem_RemoveComponent"/>
+                                <MenuItem Header="Remove" Click="MenuItem_RemoveComponent" />
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -33,12 +32,11 @@
                             BorderThickness="0" CornerRadius="2"
                             Margin="6 1 0 1" Padding="1"
                             Click="Button_OnClick"
-                            Classes="ComponentTitle">
-                    </Button>
+                            Classes="ComponentTitle" />
                 </Border>
             </DockPanel>
         </Border>
-        <local:Separator    IsVisible="{Binding !$parent[local:InspectorComponent].Expanded}"
-                            Height="1"  Background="{DynamicResource FromBackground}"/>
+        <local:Separator IsVisible="{Binding !$parent[local:InspectorComponent].Expanded}"
+                         Height="1" Background="{DynamicResource FromBackground}" />
     </StackPanel>
 </UserControl>

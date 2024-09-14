@@ -5,9 +5,9 @@
 namespace Friflo.Engine.ECS;
 
 // class is obsolete
-internal static class StructInfo
+static class StructInfo
 {
-    /// <summary> Is a multiple of 64. See <see cref="ComponentType{T}.PadCount512"/> </summary>
-    internal const  int     ChunkSize           = 512; // check 64 - can be removed
-    internal const  int     MissingAttribute    = 0;
+    /// <summary> Is a multiple of 64. See <see cref="ComponentType{T}.PadCount512" /> </summary>
+    internal const int ChunkSize = 512; // check 64 - can be removed
+    internal const int MissingAttribute = 0;
 }

@@ -6,10 +6,9 @@ using Friflo.Editor.UI.Explorer;
 namespace Friflo.Editor.UI.Main;
 
 // see: https://github.com/AvaloniaUI/Avalonia.Controls.TreeDataGrid/blob/master/samples/TreeDataGridDemo/ViewModels/MainWindowViewModel.cs
-internal class MainWindowViewModel
+class MainWindowViewModel
 {
-    private ExplorerViewModel   explorerModel;
+    private ExplorerViewModel explorerModel;
 
-    internal ExplorerViewModel  ExplorerModel => explorerModel ??= new ExplorerViewModel();
+    internal ExplorerViewModel ExplorerModel => explorerModel ??= new ExplorerViewModel();
 }
-

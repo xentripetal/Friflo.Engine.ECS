@@ -6,36 +6,38 @@ using System.Collections.Generic;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-
 public partial class EntityStore
 {
     /// <summary>
-    /// Returns a <see cref="CommandBuffer"/> used to record and <see cref="CommandBuffer.Playback"/> entity changes. 
+    ///     Returns a <see cref="CommandBuffer" /> used to record and <see cref="CommandBuffer.Playback" /> entity changes.
     /// </summary>
     public CommandBuffer GetCommandBuffer()
     {
         var pool = intern.commandBufferPool ??= new Stack<CommandBuffer>();
         lock (pool)
         {
-            if (pool.TryPop(out var buffer)) {
+            if (pool.TryPop(out var buffer))
+            {
                 buffer.Reuse();
                 return buffer;
             }
         }
         return new CommandBuffer(this);
     }
-    
+
     internal void ReturnCommandBuffer(CommandBuffer commandBuffer)
     {
         var pool = intern.commandBufferPool;
-        lock (pool) {
+        lock (pool)
+        {
             pool.Push(commandBuffer);
         }
     }
-    
+
     internal Playback GetPlayback()
     {
-        if (intern.playback == null) {
+        if (intern.playback == null)
+        {
             intern.playback = new Playback(this);
         }
         return intern.playback;

@@ -8,25 +8,27 @@ using Friflo.Engine.ECS.Collections;
 namespace Friflo.Engine.ECS.Index;
 
 /// <summary>
-/// Similar to <see cref="DictionaryUtils"/> and additionally updates <see cref="EntityNode.isLinked"/> state.
+///     Similar to <see cref="DictionaryUtils" /> and additionally updates <see cref="EntityNode.isLinked" /> state.
 /// </summary>
-internal static class EntityIndexUtils
+static class EntityIndexUtils
 {
     internal static void RemoveComponentValue(int id, int target, EntityIndex componentIndex)
     {
-        var map     = componentIndex.entityMap;
-        var idHeap  = componentIndex.idHeap;
+        var map = componentIndex.entityMap;
+        var idHeap = componentIndex.idHeap;
         map.TryGetValue(target, out var ids);
-        var idSpan  = ids.GetSpan(idHeap, componentIndex.store);
-        int index   = idSpan.IndexOf(id);
-        if (index == -1) {
+        var idSpan = ids.GetSpan(idHeap, componentIndex.store);
+        var index = idSpan.IndexOf(id);
+        if (index == -1)
+        {
             return; // unexpected. Better safe than sorry. Used belts with suspenders :)
         }
-        var nodes           =  componentIndex.store.nodes;
-        int complement      = ~componentIndex.indexBit;
-        nodes[id].isOwner  &=  complement;
-        if (ids.Count == 1) {
-            nodes[target].isLinked   &= complement;
+        var nodes = componentIndex.store.nodes;
+        var complement = ~componentIndex.indexBit;
+        nodes[id].isOwner &= complement;
+        if (ids.Count == 1)
+        {
+            nodes[target].isLinked &= complement;
             componentIndex.modified = true;
             map.Remove(target);
             return;
@@ -34,21 +36,23 @@ internal static class EntityIndexUtils
         ids.RemoveAt(index, idHeap);
         map[target] = ids;
     }
-    
+
     internal static void AddComponentValue(int id, int target, EntityIndex componentIndex)
     {
-        var map     = componentIndex.entityMap;
-        var idHeap  = componentIndex.idHeap;
+        var map = componentIndex.entityMap;
+        var idHeap = componentIndex.idHeap;
         map.TryGetValue(target, out var ids);
         var idSpan = ids.GetSpan(idHeap, componentIndex.store);
-        if (idSpan.IndexOf(id) != -1) {
+        if (idSpan.IndexOf(id) != -1)
+        {
             return; // unexpected. Better safe than sorry. Used belts with suspenders :)
         }
-        var nodes           = componentIndex.store.nodes;
-        int indexBit        = componentIndex.indexBit;
-        nodes[id].isOwner  |= indexBit;
-        if (ids.Count == 0) {
-            nodes[target].isLinked   |= indexBit;
+        var nodes = componentIndex.store.nodes;
+        var indexBit = componentIndex.indexBit;
+        nodes[id].isOwner |= indexBit;
+        if (ids.Count == 0)
+        {
+            nodes[target].isLinked |= indexBit;
             componentIndex.modified = true;
         }
         ids.Add(id, idHeap);

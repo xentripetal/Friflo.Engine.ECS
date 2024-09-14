@@ -11,24 +11,27 @@ using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 namespace Friflo.Engine.ECS.Systems;
 
 /// <summary>
-/// A query system returning entities with the specified component type via its <see cref="Query"/> property.
+///     A query system returning entities with the specified component type via its <see cref="Query" /> property.
 /// </summary>
 public abstract class QuerySystem : QuerySystemBase
 {
-    /// <summary> Return all entities matching the <see cref="Query"/>. </summary>
-    protected       ArchetypeQuery      Query       => query;
-    
-    public override string              ToString()  => $"{Name} - []";
-
     #region fields
-    [Browse(Never)] private     ArchetypeQuery    query;
+
+    [Browse(Never)]
+    private ArchetypeQuery query;
+
     #endregion
-    
-    protected QuerySystem() : base (default) { }
-    
-    internal override void SetQuery(ArchetypeQuery query) { this.query = query; }
-    
-    internal override ArchetypeQuery  CreateQuery(EntityStore store) {
-        return store.Query(Filter);
+
+    protected QuerySystem() : base(default) { }
+    /// <summary> Return all entities matching the <see cref="Query" />. </summary>
+    protected ArchetypeQuery Query => query;
+
+    public override string ToString() => $"{Name} - []";
+
+    internal override void SetQuery(ArchetypeQuery query)
+    {
+        this.query = query;
     }
+
+    internal override ArchetypeQuery CreateQuery(EntityStore store) => store.Query(Filter);
 }

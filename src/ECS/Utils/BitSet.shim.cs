@@ -124,23 +124,47 @@ public partial struct BitSet
 
     internal static int NumberOfSetBits(long i)
     {
-        i -= ((i >> 1) & 0x5555555555555555);
-        i = (i & 0x3333333333333333) + ((i >> 2) & 0x3333333333333333);
-        return (int)((((i + (i >> 4)) & 0xF0F0F0F0F0F0F0F) * 0x101010101010101) >> 56);
+        i -= i >> 1 & 0x5555555555555555;
+        i = (i & 0x3333333333333333) + (i >> 2 & 0x3333333333333333);
+        return (int)((i + (i >> 4) & 0xF0F0F0F0F0F0F0F) * 0x101010101010101 >> 56);
     }
-    
-    internal static int TrailingZeroCount(long i) {
+
+    internal static int TrailingZeroCount(long i)
+    {
         long y;
         if (i == 0) return 64;
-        int n = 63;
+        var n = 63;
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse - no clue why
-        y = i << 32; if (y != 0) { n = n -32; i = y; }
-        y = i << 16; if (y != 0) { n = n -16; i = y; }
-        y = i << 8;  if (y != 0) { n = n - 8; i = y; }
-        y = i << 4;  if (y != 0) { n = n - 4; i = y; }
-        y = i << 2;  if (y != 0) { n = n - 2; i = y; }
-        return (int)(n - ((i << 1) >>> 63));
+        y = i << 32;
+        if (y != 0)
+        {
+            n = n - 32;
+            i = y;
+        }
+        y = i << 16;
+        if (y != 0)
+        {
+            n = n - 16;
+            i = y;
+        }
+        y = i << 8;
+        if (y != 0)
+        {
+            n = n - 8;
+            i = y;
+        }
+        y = i << 4;
+        if (y != 0)
+        {
+            n = n - 4;
+            i = y;
+        }
+        y = i << 2;
+        if (y != 0)
+        {
+            n = n - 2;
+            i = y;
+        }
+        return (int)(n - (i << 1 >>> 63));
     }
 }
-
-

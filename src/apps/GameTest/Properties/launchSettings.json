@@ -4,7 +4,6 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "workingDirectory": "./",
-
             "rem.launchBrowser": true,
             "rem.applicationUrl": "https://localhost:5000",
             "rem.launchUrl": "https://localhost:5000"

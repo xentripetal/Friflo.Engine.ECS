@@ -10,32 +10,35 @@ using Friflo.Engine.ECS.Collections;
 namespace Friflo.Engine.ECS.Index;
 
 [ExcludeFromCodeCoverage] // not used - kept only for reference
-internal static class SortedListUtils
+static class SortedListUtils
 {
     internal static void RemoveComponentValue<TValue>(int id, in TValue value, SortedList<TValue, IdArray> map, ComponentIndex componentIndex)
     {
-        var idHeap  = componentIndex.idHeap;
+        var idHeap = componentIndex.idHeap;
         map.TryGetValue(value, out var ids);
-        var idSpan  = ids.GetSpan(idHeap, componentIndex.store);
-        int index   = idSpan.IndexOf(id);
-        if (index == -1) {
+        var idSpan = ids.GetSpan(idHeap, componentIndex.store);
+        var index = idSpan.IndexOf(id);
+        if (index == -1)
+        {
             return; // unexpected. Better safe than sorry. Used belts with suspenders :)
         }
         componentIndex.store.nodes[id].isOwner &= ~componentIndex.indexBit;
-        if (ids.Count == 1) {
+        if (ids.Count == 1)
+        {
             map.Remove(value);
             return;
         }
         ids.RemoveAt(index, idHeap);
         map[value] = ids;
     }
-    
+
     internal static void AddComponentValue<TValue>(int id, in TValue value, SortedList<TValue, IdArray> map, ComponentIndex componentIndex)
     {
         var idHeap = componentIndex.idHeap;
         map.TryGetValue(value, out var ids);
         var idSpan = ids.GetSpan(idHeap, componentIndex.store);
-        if (idSpan.IndexOf(id) != -1) {
+        if (idSpan.IndexOf(id) != -1)
+        {
             return; // unexpected. Better safe than sorry. Used belts with suspenders :)
         }
         componentIndex.store.nodes[id].isOwner |= componentIndex.indexBit;

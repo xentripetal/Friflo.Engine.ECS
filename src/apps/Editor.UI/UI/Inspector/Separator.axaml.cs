@@ -7,7 +7,6 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class Separator : UserControl
 {
-    
     public Separator()
     {
         InitializeComponent();

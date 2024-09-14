@@ -9,14 +9,15 @@ namespace Friflo.Engine.ECS;
 public partial class EntityStoreBase
 {
     /// <summary>
-    /// Return the entity with a <see cref="UniqueEntity"/> component and its <see cref="UniqueEntity.uid"/> == <paramref name="uid"/>.<br/>
-    /// See <a href="https://friflo.gitbook.io/friflo.engine.ecs/examples/general#unique-entity">Example.</a>
+    ///     Return the entity with a <see cref="UniqueEntity" /> component and its <see cref="UniqueEntity.uid" /> ==
+    ///     <paramref name="uid" />.<br />
+    ///     See <a href="https://friflo.gitbook.io/friflo.engine.ecs/examples/general#unique-entity">Example.</a>
     /// </summary>
     /// <exception cref="InvalidOperationException">
-    /// In case none or more than one <see cref="UniqueEntity"/> with the given <paramref name="uid"/> found.
+    ///     In case none or more than one <see cref="UniqueEntity" /> with the given <paramref name="uid" /> found.
     /// </exception>
     /// <remarks>
-    /// To Get all <see cref="UniqueEntity"/>'s of the store use <see cref="UniqueEntities"/>.
+    ///     To Get all <see cref="UniqueEntity" />'s of the store use <see cref="UniqueEntities" />.
     /// </remarks>
     public Entity GetUniqueEntity(string uid)
     {
@@ -24,34 +25,36 @@ public partial class EntityStoreBase
 
         // --- enumerate entities with unique names
         var foundId = 0;
-        foreach (var (uniqueEntity, entities) in query.Chunks)
+        foreach ((var uniqueEntity, var entities) in query.Chunks)
         {
             var uniqueEntities = uniqueEntity.Span;
-            for (int n = 0; n < uniqueEntities.Length; n++) {
-                if (uniqueEntities[n].uid != uid) {
+            for (var n = 0; n < uniqueEntities.Length; n++)
+            {
+                if (uniqueEntities[n].uid != uid)
+                {
                     continue;
                 }
-                if (foundId != 0) {
+                if (foundId != 0)
+                {
                     throw MultipleEntitiesWithSameName(uid);
                 }
                 foundId = entities[n];
             }
         }
-        if (foundId != 0) {
+        if (foundId != 0)
+        {
             return new Entity((EntityStore)this, foundId);
         }
         throw new InvalidOperationException($"found no {nameof(UniqueEntity)} with uid: \"{uid}\"");
     }
-    
+
     private QueryEntities GetUniqueEntities()
     {
         var query = internBase.uniqueEntityQuery ??= CreateUniqueEntityQuery();
         return query.Entities;
     }
-    
+
     private ArchetypeQuery<UniqueEntity> CreateUniqueEntityQuery() => Query<UniqueEntity>().WithDisabled();
-    
-    private static InvalidOperationException MultipleEntitiesWithSameName(string name) {
-        return new InvalidOperationException($"found multiple {nameof(UniqueEntity)}'s with uid: \"{name}\"");
-    }
+
+    private static InvalidOperationException MultipleEntitiesWithSameName(string name) => new ($"found multiple {nameof(UniqueEntity)}'s with uid: \"{name}\"");
 }

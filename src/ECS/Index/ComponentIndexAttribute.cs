@@ -6,7 +6,7 @@ using System;
 namespace Friflo.Engine.ECS.Index;
 
 /// <summary>
-/// Assigns a custom <see cref="ComponentIndex"/> to an attributed component type.
+///     Assigns a custom <see cref="ComponentIndex" /> to an attributed component type.
 /// </summary>
 [AttributeUsage(AttributeTargets.Struct)]
 public sealed class ComponentIndexAttribute : Attribute
@@ -14,4 +14,3 @@ public sealed class ComponentIndexAttribute : Attribute
     // ReSharper disable once UnusedParameter.Local
     public ComponentIndexAttribute(Type type) { }
 }
-

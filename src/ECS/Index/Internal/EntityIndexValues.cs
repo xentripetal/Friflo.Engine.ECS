@@ -9,38 +9,37 @@ using Friflo.Engine.ECS.Collections;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS.Index;
 
-internal sealed class EntityIndexValues : IReadOnlyCollection<Entity>
+sealed class EntityIndexValues : IReadOnlyCollection<Entity>
 {
-    public              int         Count => entityIndex.Count;
+    private readonly EntityIndex entityIndex;
 
-    private readonly    EntityIndex entityIndex;
-    
-    internal EntityIndexValues (EntityIndex entityIndex) {
-        this.entityIndex = entityIndex;
-    }
+    internal EntityIndexValues(EntityIndex entityIndex) => this.entityIndex = entityIndex;
+
+    public int Count => entityIndex.Count;
 
     public IEnumerator<Entity> GetEnumerator() => new EntityIndexValuesEnumerator(entityIndex);
-    IEnumerator    IEnumerable.GetEnumerator() => throw new NotImplementedException();
+    IEnumerator IEnumerable.GetEnumerator() => throw new NotImplementedException();
 }
 
-internal sealed class EntityIndexValuesEnumerator : IEnumerator<Entity>
+sealed class EntityIndexValuesEnumerator : IEnumerator<Entity>
 {
-    private             Dictionary<int,IdArray>.KeyCollection.Enumerator    enumerator;
-    private readonly    EntityStore                                         store;
-    
-    internal EntityIndexValuesEnumerator(EntityIndex entityIndex) {
-        enumerator  = entityIndex.entityMap.Keys.GetEnumerator();
-        store       = entityIndex.store;
+    private readonly EntityStore store;
+    private Dictionary<int, IdArray>.KeyCollection.Enumerator enumerator;
+
+    internal EntityIndexValuesEnumerator(EntityIndex entityIndex)
+    {
+        enumerator = entityIndex.entityMap.Keys.GetEnumerator();
+        store = entityIndex.store;
     }
 
     // --- IDisposable
-    public  void    Dispose()           => enumerator.Dispose();
+    public void Dispose() => enumerator.Dispose();
 
     // --- IEnumerator
-    public  bool    MoveNext()          => enumerator.MoveNext();
-    public  void    Reset()             => throw new NotImplementedException();
-            object  IEnumerator.Current => throw new NotImplementedException();
+    public bool MoveNext() => enumerator.MoveNext();
+    public void Reset() => throw new NotImplementedException();
+    object IEnumerator.Current => throw new NotImplementedException();
 
     // --- IEnumerator<>
-    public  Entity  Current             => new Entity(store, enumerator.Current);
+    public Entity Current => new (store, enumerator.Current);
 }

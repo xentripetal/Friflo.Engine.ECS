@@ -7,28 +7,28 @@
         x:Class="Friflo.Editor.UI.MainWindow"
         Background="{DynamicResource AppBackground}"
         Title="Fliox Editor"
-        
+
         xmlns:panels="clr-namespace:Friflo.Editor.UI.Panels;assembly=Friflo.Editor.UI"
         xmlns:customTitleBars="clr-namespace:CustomTitleBarTemplate.Views.CustomTitleBars"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="PreferSystemChrome"
         ExtendClientAreaTitleBarHeightHint="-1">
-    
+
     <!-- template project: https://github.com/FrankenApps/Avalonia-CustomTitleBarTemplate -->
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="File">
                 <NativeMenuItem.Menu>
                     <NativeMenu>
-                        <NativeMenuItem Header="Open"/>
+                        <NativeMenuItem Header="Open" />
                         <NativeMenuItem Header="Recent">
                             <NativeMenuItem.Menu>
-                                <NativeMenu/>
+                                <NativeMenu />
                             </NativeMenuItem.Menu>
                         </NativeMenuItem>
                         <NativeMenuItem Header="Quit Avalonia"
                                         Gesture="CTRL+Q"
-                                        Click="QuitProgramCommand"/>
+                                        Click="QuitProgramCommand" />
                     </NativeMenu>
                 </NativeMenuItem.Menu>
             </NativeMenuItem>
@@ -37,49 +37,49 @@
                     <NativeMenu>
                         <NativeMenuItem Header="Copy"
                                         Gesture="CTRL+C"
-                                        Click="CopyToClipboard"/>
-                        <NativeMenuItem Header="Paste"/>
+                                        Click="CopyToClipboard" />
+                        <NativeMenuItem Header="Paste" />
                     </NativeMenu>
                 </NativeMenuItem.Menu>
             </NativeMenuItem>
         </NativeMenu>
     </NativeMenu.Menu>
-    
+
     <!-- template project: https://github.com/FrankenApps/Avalonia-CustomTitleBarTemplate -->
     <DockPanel HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
                Name="ContentWrapper">
-        <customTitleBars:WindowsTitleBar IsSeamless="True"></customTitleBars:WindowsTitleBar>
-        <customTitleBars:MacosTitleBar IsSeamless="False"></customTitleBars:MacosTitleBar>
+        <customTitleBars:WindowsTitleBar IsSeamless="True" />
+        <customTitleBars:MacosTitleBar IsSeamless="False" />
         <!-- template project - end -->
-        
+
         <DockPanel>
             <!--
             <Rectangle        Height="0"   DockPanel.Dock="Top"    Fill="{DynamicResource AppBackground}"/>
             <Rectangle        Height="4"    DockPanel.Dock="Top"    Fill="{DynamicResource AppBackground}"/>
             -->
-            <Rectangle        Height="0"    DockPanel.Dock="Bottom" Fill="{DynamicResource AppBackground}"/>
-            <Rectangle        Height="4"    DockPanel.Dock="Bottom" Fill="{DynamicResource AppBackground}"/>
-            <Rectangle        Width="4"     DockPanel.Dock="Left"   Fill="{DynamicResource AppBackground}"/>
-            <DockPanel        Width="300"   DockPanel.Dock="Left">
-                <panels:ExplorerPanel       DockPanel.Dock="Top"
-                              Name="ExplorerPanel"
-                              Height="400"/>
-                <Rectangle    Height="4"    DockPanel.Dock="Top"    Fill="{DynamicResource AppBackground}"/>
-                <panels:InspectorPanel/>
+            <Rectangle Height="0" DockPanel.Dock="Bottom" Fill="{DynamicResource AppBackground}" />
+            <Rectangle Height="4" DockPanel.Dock="Bottom" Fill="{DynamicResource AppBackground}" />
+            <Rectangle Width="4" DockPanel.Dock="Left" Fill="{DynamicResource AppBackground}" />
+            <DockPanel Width="300" DockPanel.Dock="Left">
+                <panels:ExplorerPanel DockPanel.Dock="Top"
+                                      Name="ExplorerPanel"
+                                      Height="400" />
+                <Rectangle Height="4" DockPanel.Dock="Top" Fill="{DynamicResource AppBackground}" />
+                <panels:InspectorPanel />
             </DockPanel>
-            <Rectangle        Width="4"     DockPanel.Dock="Left"   Fill="{DynamicResource AppBackground}"/>
-            <Rectangle        Width="4"     DockPanel.Dock="Right"  Fill="{DynamicResource AppBackground}"/>
-            <DockPanel        Width="300"   DockPanel.Dock="Right" >
-                <panels:TestPanel Name="Test"   DockPanel.Dock="Top" />
-                <Rectangle    Height="4"    DockPanel.Dock="Top"    Fill="{DynamicResource AppBackground}"/>
-                <panels:ExplorerPanel   DockPanel.Dock="Top" Height="200"
-                              IsVisible="{Binding #Test.Explorer}"/>
-                <Rectangle    Height="4"    DockPanel.Dock="Top"    Fill="{DynamicResource AppBackground}"
-                              IsVisible="{Binding #Test.Explorer}"/>
-                <panels:InspectorPanel/>
+            <Rectangle Width="4" DockPanel.Dock="Left" Fill="{DynamicResource AppBackground}" />
+            <Rectangle Width="4" DockPanel.Dock="Right" Fill="{DynamicResource AppBackground}" />
+            <DockPanel Width="300" DockPanel.Dock="Right">
+                <panels:TestPanel Name="Test" DockPanel.Dock="Top" />
+                <Rectangle Height="4" DockPanel.Dock="Top" Fill="{DynamicResource AppBackground}" />
+                <panels:ExplorerPanel DockPanel.Dock="Top" Height="200"
+                                      IsVisible="{Binding #Test.Explorer}" />
+                <Rectangle Height="4" DockPanel.Dock="Top" Fill="{DynamicResource AppBackground}"
+                           IsVisible="{Binding #Test.Explorer}" />
+                <panels:InspectorPanel />
             </DockPanel>
-            <Rectangle        Width="4"     DockPanel.Dock="Right"  Fill="{DynamicResource AppBackground}"/>
+            <Rectangle Width="4" DockPanel.Dock="Right" Fill="{DynamicResource AppBackground}" />
             <Border BorderThickness="1" BorderBrush="{DynamicResource PanelBorder}">
                 <openGl:SilkOpenGLControl Name="OpenGlControl" />
             </Border>

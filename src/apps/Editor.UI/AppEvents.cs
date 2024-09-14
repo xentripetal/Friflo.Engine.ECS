@@ -12,60 +12,72 @@ namespace Friflo.Editor;
 
 public abstract class AppEvents
 {
-#region public properties
-    public              EntityStore             Store       => store;
-    public   static     Window                  Window      => _window;
-    public   static     AppEvents               Instance    => _appEvents;
-    #endregion
-    
-#region protected fields
-    protected           EntityStore             store;
-    protected readonly  List<EditorObserver>    observers   = new List<EditorObserver>();
-    protected           bool                    isReady;
-    #endregion
+    // -------------------------------------- panel / commands --------------------------------------
+    protected PanelControl activePanel;
 
-#region static fields
-    private static      Func<Window>            _createMainWindow;
-    private static      Window                  _window;
-    private static      AppEvents               _appEvents;
-    #endregion
-    
-    public static void Init(AppEvents appEvents, Func<Window> createMainWindow) {
-        _appEvents          = appEvents;
-        _createMainWindow   = createMainWindow;
+    public static void Init(AppEvents appEvents, Func<Window> createMainWindow)
+    {
+        _appEvents = appEvents;
+        _createMainWindow = createMainWindow;
     }
-    
-    public static Window CreateMainWindow() {
+
+    public static Window CreateMainWindow()
+    {
         _window = _createMainWindow();
         return _window;
     }
-    
-    
+
+
     public void AddObserver(EditorObserver observer)
     {
         observers.Add(observer);
-        if (isReady) {
-            observer.SendEditorReady();  // could be deferred to event loop
+        if (isReady)
+        {
+            observer.SendEditorReady(); // could be deferred to event loop
         }
     }
-    
-    public void SelectionChanged(EditorSelection selection) {
+
+    public void SelectionChanged(EditorSelection selection)
+    {
         StoreDispatcher.Post(() => {
-            EditorObserver.CastSelectionChanged(observers, selection);    
+            EditorObserver.CastSelectionChanged(observers, selection);
         });
     }
-    
-    // -------------------------------------- panel / commands --------------------------------------
-    protected PanelControl activePanel;
-    
+
     internal void SetActivePanel(PanelControl panel)
     {
-        if (activePanel != null) {
+        if (activePanel != null)
+        {
             activePanel.Header.PanelActive = false;
         }
         activePanel = panel;
-        if (panel != null) {
+        if (panel != null)
+        {
             panel.Header.PanelActive = true;
         }
     }
+
+    #region public properties
+
+    public EntityStore Store => store;
+    public static Window Window => _window;
+    public static AppEvents Instance => _appEvents;
+
+    #endregion
+
+    #region protected fields
+
+    protected EntityStore store;
+    protected readonly List<EditorObserver> observers = new ();
+    protected bool isReady;
+
+    #endregion
+
+    #region static fields
+
+    private static Func<Window> _createMainWindow;
+    private static Window _window;
+    private static AppEvents _appEvents;
+
+    #endregion
 }

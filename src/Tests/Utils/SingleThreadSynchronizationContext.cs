@@ -8,25 +8,31 @@ namespace Tests.Utils
     // [Await, SynchronizationContext, and Console Apps | .NET Parallel Programming] https://devblogs.microsoft.com/pfxteam/await-synchronizationcontext-and-console-apps/
     public class SingleThreadSynchronizationContext : SynchronizationContext
     {
-        private readonly BlockingCollection<ActionPair> queue = new BlockingCollection<ActionPair>();
- 
-        public override void Post(SendOrPostCallback callback, object state) {
-            var action = new ActionPair {callback = callback, state = state};
+        private readonly BlockingCollection<ActionPair> queue = new ();
+
+        public override void Post(SendOrPostCallback callback, object state)
+        {
+            var action = new ActionPair
+            {
+                callback = callback,
+                state = state
+            };
             queue.Add(action);
         }
- 
-        private void RunOnCurrentThread() {
-            while (queue.TryTake(out ActionPair action, Timeout.Infinite))
+
+        private void RunOnCurrentThread()
+        {
+            while (queue.TryTake(out var action, Timeout.Infinite))
                 action.callback(action.state);
             Console.WriteLine("RunOnCurrentThread exited.");
         }
- 
+
         private void Complete()
         {
             queue.CompleteAdding();
             Console.WriteLine("SingleThreadSynchronizationContext Completed.");
         }
- 
+
         public static void Run(Func<Task> func)
         {
             var prevCtx = Current;
@@ -34,20 +40,24 @@ namespace Tests.Utils
             {
                 var syncCtx = new SingleThreadSynchronizationContext();
                 SetSynchronizationContext(syncCtx);
- 
-                Task funcTask = func();
+
+                var funcTask = func();
                 funcTask.ContinueWith(_ => syncCtx.Complete(), TaskScheduler.Default);
- 
+
                 syncCtx.RunOnCurrentThread();
- 
+
                 funcTask.GetAwaiter().GetResult();
             }
-            finally { SetSynchronizationContext(prevCtx); }
+            finally
+            {
+                SetSynchronizationContext(prevCtx);
+            }
         }
     }
- 
-    internal struct ActionPair {
-        internal SendOrPostCallback  callback;
-        internal object              state;
+
+    struct ActionPair
+    {
+        internal SendOrPostCallback callback;
+        internal object state;
     }
 }

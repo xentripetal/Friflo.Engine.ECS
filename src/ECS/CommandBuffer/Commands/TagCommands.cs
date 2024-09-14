@@ -5,17 +5,17 @@
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal enum TagChange : byte
+enum TagChange : byte
 {
-    Remove  = 0,
-    Add     = 1,
+    Remove = 0,
+    Add = 1
 }
 
-internal struct TagCommand
+struct TagCommand
 {
-    internal    byte        tagIndex;   //  1
-    internal    TagChange   change;     //  1
-    internal    int         entityId;   //  4
+    internal byte tagIndex; //  1
+    internal TagChange change; //  1
+    internal int entityId; //  4
 
     public override string ToString() => $"entity: {entityId} - {change} [#{EntityStoreBase.Static.EntitySchema.tags[tagIndex].Name}]";
 }

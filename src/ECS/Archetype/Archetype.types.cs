@@ -6,40 +6,40 @@ using System;
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal struct StandardComponents
+struct StandardComponents
 {
-    internal    StructHeap<Position>    position;   // 8
-    internal    StructHeap<Rotation>    rotation;   // 8
-    internal    StructHeap<Scale3>      scale3;     // 8
-    internal    StructHeap<EntityName>  name;       // 8
+    internal StructHeap<Position> position; // 8
+    internal StructHeap<Rotation> rotation; // 8
+    internal StructHeap<Scale3> scale3; // 8
+    internal StructHeap<EntityName> name; // 8
 }
 
-internal readonly struct ArchetypeConfig
+readonly struct ArchetypeConfig
 {
-    internal readonly   EntityStoreBase store;
-    internal readonly   int             archetypeIndex;
-    internal readonly   EntitySchema    schema;
-    
+    internal readonly EntityStoreBase store;
+    internal readonly int archetypeIndex;
+    internal readonly EntitySchema schema;
+
     internal ArchetypeConfig(EntityStoreBase store, int archetypeIndex, EntitySchema schema)
     {
-        this.store          = store;
+        this.store = store;
         this.archetypeIndex = archetypeIndex;
-        this.schema         = schema;
+        this.schema = schema;
     }
 }
 
-internal struct ArchetypeMemory
+struct ArchetypeMemory
 {
     /// <summary> 512, 1024, 2048, 4096, ... </summary>
-    internal        int     capacity;
+    internal int capacity;
     /// <summary>  -1,  512, 1024, 2048, ... </summary>
-    internal        int     shrinkThreshold;
+    internal int shrinkThreshold;
 }
 
-internal static class ArchetypeExtensions
+static class ArchetypeExtensions
 {
-    internal static ReadOnlySpan<StructHeap>   Heaps       (this Archetype archetype)  => archetype.structHeaps;
-     
+    internal static ReadOnlySpan<StructHeap> Heaps(this Archetype archetype) => archetype.structHeaps;
+
     /*
     internal static                    int     ChunkCount  (this Archetype archetype)  // entity count: 0: 0   1:0 ... 512:0     513:1 ...
                                                => archetype.entityCount / ChunkSize;

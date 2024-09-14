@@ -5,16 +5,17 @@
              xmlns:panels="clr-namespace:Friflo.Editor.UI.Panels"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="400"
              x:Class="Friflo.Editor.UI.Panels.TestPanel">
-    <Border BorderThickness="1" BorderBrush="{DynamicResource PanelBorder}" CornerRadius="{DynamicResource Radius}" Background="{DynamicResource PanelBackground}">
-    <DockPanel>
-        <panels:PanelHeader PanelTitle="Test" DockPanel.Dock="Top"/>
-        <StackPanel Orientation="Horizontal">
-            <Button Padding="4" Margin="4"  Click="OnButtonClick" Background="Transparent">
-                <TextBlock  Padding="0" Margin="0" Classes="Hyperlink">Web UI</TextBlock>
-            </Button>
-            <TextBlock  Padding="4" Margin="4" Text="Explorer"/>
-            <CheckBox IsChecked="{Binding $parent[panels:TestPanel].Explorer}"/>
-        </StackPanel>
-    </DockPanel>
+    <Border BorderThickness="1" BorderBrush="{DynamicResource PanelBorder}" CornerRadius="{DynamicResource Radius}"
+            Background="{DynamicResource PanelBackground}">
+        <DockPanel>
+            <panels:PanelHeader PanelTitle="Test" DockPanel.Dock="Top" />
+            <StackPanel Orientation="Horizontal">
+                <Button Padding="4" Margin="4" Click="OnButtonClick" Background="Transparent">
+                    <TextBlock Padding="0" Margin="0" Classes="Hyperlink">Web UI</TextBlock>
+                </Button>
+                <TextBlock Padding="4" Margin="4" Text="Explorer" />
+                <CheckBox IsChecked="{Binding $parent[panels:TestPanel].Explorer}" />
+            </StackPanel>
+        </DockPanel>
     </Border>
 </UserControl>

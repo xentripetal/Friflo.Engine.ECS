@@ -4,7 +4,6 @@
 
 // Hard rule: this file MUST NOT use type: Entity
 
-using Friflo.Engine.ECS.Index;
 using Friflo.Engine.ECS.Utils;
 
 // ReSharper disable ConvertToAutoPropertyWithPrivateSetter
@@ -54,7 +53,7 @@ public partial class EntityStoreBase
         archIndex           = arch.archIndex;
         if (StructInfo<T>.HasIndex) StoreIndex.AddIndex(store, id, component);
         newHeap             = (StructHeap<T>)arch.heapMap[structIndex];
-        
+
     AssignComponent:  // --- assign passed component value
         newHeap.components[compIndex]  = component;
         // Send event. See: SEND_EVENT notes
@@ -65,7 +64,7 @@ public partial class EntityStoreBase
         componentAdded.Invoke(new ComponentChanged (store, id, action, structIndex, oldHeap));
         return added;
     }
-    
+
     internal static bool RemoveComponent<T>(
             int         id,
         ref Archetype   archetype,    // possible mutation is not null
@@ -103,60 +102,68 @@ public partial class EntityStoreBase
 */
 
     // ------------------------------------ add / remove entity Tag ------------------------------------
-#region add / remove tags
+
+    #region add / remove tags
 
     internal static bool AddTags(
         EntityStoreBase store,
-        in Tags         tags,
-        int             id,
-        ref Archetype   archetype,      // possible mutation is not null
-        ref int         compIndex,
-        ref int         archIndex)
+        in Tags tags,
+        int id,
+        ref Archetype archetype, // possible mutation is not null
+        ref int compIndex,
+        ref int archIndex
+    )
     {
-        var arch        = archetype;
-        var curTags     = arch.tags;
-        var newTags     = new Tags (BitSet.Add(curTags.bitSet, tags.bitSet));
-        if (newTags.bitSet.Equals(curTags.bitSet)) {
+        var arch = archetype;
+        var curTags = arch.tags;
+        var newTags = new Tags(BitSet.Add(curTags.bitSet, tags.bitSet));
+        if (newTags.bitSet.Equals(curTags.bitSet))
+        {
             return false;
         }
-        var newArchetype    = GetArchetypeWithTags(store, arch, newTags);
-        archetype           = newArchetype;
-        archIndex           = newArchetype.archIndex;
-        compIndex           = Archetype.MoveEntityTo(arch, id, compIndex, newArchetype);
+        var newArchetype = GetArchetypeWithTags(store, arch, newTags);
+        archetype = newArchetype;
+        archIndex = newArchetype.archIndex;
+        compIndex = Archetype.MoveEntityTo(arch, id, compIndex, newArchetype);
         // Send event. See: SEND_EVENT notes
         var tagsChanged = store.internBase.tagsChanged;
-        if (tagsChanged == null) {
+        if (tagsChanged == null)
+        {
             return true;
         }
         tagsChanged.Invoke(new TagsChanged(store, id, newTags, curTags));
         return true;
     }
-    
+
     internal static bool RemoveTags(
         EntityStoreBase store,
-        in Tags         tags,
-        int             id,
-        ref Archetype   archetype,      // possible mutation is not null
-        ref int         compIndex,
-        ref int         archIndex)
+        in Tags tags,
+        int id,
+        ref Archetype archetype, // possible mutation is not null
+        ref int compIndex,
+        ref int archIndex
+    )
     {
-        var arch        = archetype;
-        var curTags     = arch.tags;
-        var newTags     = new Tags (BitSet.Remove(curTags.bitSet, tags.bitSet));
-        if (newTags.bitSet.Equals(curTags.bitSet)) {
+        var arch = archetype;
+        var curTags = arch.tags;
+        var newTags = new Tags(BitSet.Remove(curTags.bitSet, tags.bitSet));
+        if (newTags.bitSet.Equals(curTags.bitSet))
+        {
             return false;
         }
-        var newArchetype    = GetArchetypeWithTags(store, arch, newTags);
-        archetype           = newArchetype;
-        archIndex           = newArchetype.archIndex;
-        compIndex           = Archetype.MoveEntityTo(arch, id, compIndex, newArchetype);
+        var newArchetype = GetArchetypeWithTags(store, arch, newTags);
+        archetype = newArchetype;
+        archIndex = newArchetype.archIndex;
+        compIndex = Archetype.MoveEntityTo(arch, id, compIndex, newArchetype);
         // Send event. See: SEND_EVENT notes
         var tagsChanged = store.internBase.tagsChanged;
-        if (tagsChanged == null) {
+        if (tagsChanged == null)
+        {
             return true;
         }
         tagsChanged.Invoke(new TagsChanged(store, id, newTags, curTags));
         return true;
     }
+
     #endregion
 }

@@ -15,90 +15,98 @@ using Browse = System.Diagnostics.DebuggerBrowsableAttribute;
 namespace Friflo.Engine.ECS;
 
 /// <summary>
-/// Return the <see cref="IComponent"/>'s added to an <see cref="Entity"/>.
+///     Return the <see cref="IComponent" />'s added to an <see cref="Entity" />.
 /// </summary>
 [DebuggerTypeProxy(typeof(EntityComponentsDebugView))]
 public readonly struct EntityComponents : IEnumerable<EntityComponent>
 {
     // --- internal fields
     [Browse(Never)]
-    private  readonly   Entity  entity;     // 16
+    private readonly Entity entity; // 16
 
-    /// <summary>Return the number of <see cref="IComponent"/>'s of an entity.</summary>
-    public              int     Count       => GetCount();
-    public   override   string  ToString()  => GetString();
-    
+    /// <summary>Return the number of <see cref="IComponent" />'s of an entity.</summary>
+    public int Count => GetCount();
+    public override string ToString() => GetString();
+
     private int GetCount()
     {
-        var type        = entity.archetype;
-        var count       = type.componentCount; 
-        if (!GetRelationTypes(entity, out var relationTypes)) {
+        var type = entity.archetype;
+        var count = type.componentCount;
+        if (!GetRelationTypes(entity, out var relationTypes))
+        {
             return count;
         }
         var relationsMap = entity.store.extension.relationsMap;
         foreach (var componentType in relationTypes)
         {
             var relations = relationsMap[componentType.StructIndex]; // not null - ensured by GetRelationTypes()
-            count        += relations.GetRelationCount(entity);
+            count += relations.GetRelationCount(entity);
         }
         return count;
     }
-    
+
     private EntityComponent[] CreateComponents()
     {
-        if (!EntityComponents.GetRelationTypes(entity, out var relationTypes)) {
+        if (!GetRelationTypes(entity, out var relationTypes))
+        {
             return null;
         }
-        var components  = new EntityComponent[GetCount()];
-        int compIndex   = 0;
-        foreach (var componentType in entity.archetype.componentTypes) {
+        var components = new EntityComponent[GetCount()];
+        var compIndex = 0;
+        foreach (var componentType in entity.archetype.componentTypes)
+        {
             components[compIndex++] = new EntityComponent(entity, componentType);
         }
         var relationsMap = entity.store.extension.relationsMap;
         foreach (var componentType in relationTypes)
         {
-            var relations       = relationsMap[componentType.StructIndex]; // not null - ensured by GetRelationTypes()
-            int relationCount   = relations.GetRelationCount(entity);
-            for (int n = 0; n < relationCount; n++) {
+            var relations = relationsMap[componentType.StructIndex]; // not null - ensured by GetRelationTypes()
+            var relationCount = relations.GetRelationCount(entity);
+            for (var n = 0; n < relationCount; n++)
+            {
                 components[compIndex++] = new EntityComponent(entity, componentType, relations, n);
             }
         }
         return components;
     }
-    
+
     private static bool GetRelationTypes(Entity entity, out ComponentTypes relationTypes)
     {
-        relationTypes  = default;
-        var isOwner = entity.store.nodes[entity.Id].isOwner; 
-        if (isOwner == 0) {
+        relationTypes = default;
+        var isOwner = entity.store.nodes[entity.Id].isOwner;
+        if (isOwner == 0)
+        {
             return false;
         }
         var intersect = isOwner & EntityStoreBase.Static.EntitySchema.relationTypes.bitSet.l0;
         relationTypes.bitSet.l0 = intersect;
         return intersect != 0;
     }
-    
+
     internal IComponent[] GetComponentArray()
     {
-        int count = GetCount();
-        if (count == 0) {
+        var count = GetCount();
+        if (count == 0)
+        {
             return Array.Empty<IComponent>();
         }
         var components = new IComponent[count];
-        int n = 0;
-        foreach (var component in this) {
+        var n = 0;
+        foreach (var component in this)
+        {
             components[n++] = component.GetValue();
         }
         return components;
     }
-    
+
     private string GetString()
     {
-        var sb          = new StringBuilder();
-        var archetype   = entity.archetype;
+        var sb = new StringBuilder();
+        var archetype = entity.archetype;
         archetype.componentTypes.AppendTo(sb);
         var relationCount = GetCount() - archetype.componentTypes.Count;
-        if (relationCount > 0) {
+        if (relationCount > 0)
+        {
             sb.Append(" +");
             sb.Append(relationCount);
             sb.Append(" relations");
@@ -107,60 +115,64 @@ public readonly struct EntityComponents : IEnumerable<EntityComponent>
     }
 
     // --- IEnumerable<>
-    IEnumerator<EntityComponent>   IEnumerable<EntityComponent>.GetEnumerator() => new ComponentEnumerator(entity, CreateComponents());
-    
-    // --- IEnumerable
-    IEnumerator                                     IEnumerable.GetEnumerator() => new ComponentEnumerator(entity, CreateComponents());
-    
-    // --- new
-    public ComponentEnumerator                                  GetEnumerator() => new ComponentEnumerator(entity, CreateComponents());
+    IEnumerator<EntityComponent> IEnumerable<EntityComponent>.GetEnumerator() => new ComponentEnumerator(entity, CreateComponents());
 
-    internal EntityComponents(Entity entity) {
-        this.entity          = entity;
-    }
+    // --- IEnumerable
+    IEnumerator IEnumerable.GetEnumerator() => new ComponentEnumerator(entity, CreateComponents());
+
+    // --- new
+    public ComponentEnumerator GetEnumerator() => new (entity, CreateComponents());
+
+    internal EntityComponents(Entity entity) => this.entity = entity;
 }
 
 /// <summary>
-/// Enumerate the components of an entity by iterating <see cref="EntityComponents"/>. 
+///     Enumerate the components of an entity by iterating <see cref="EntityComponents" />.
 /// </summary>
 public struct ComponentEnumerator : IEnumerator<EntityComponent>
 {
-#region fields
+    #region fields
+
     // --- used when entity does not contain relations
-    private  readonly   Entity                      entity;             // 16
-    private             ComponentTypesEnumerator    typesEnumerator;    // 48
+    private readonly Entity entity; // 16
+    private ComponentTypesEnumerator typesEnumerator; // 48
     // --- used when entity contains relations
-    private  readonly   EntityComponent[]           components;         //  8
-    private             int                         index;              //  4
+    private readonly EntityComponent[] components; //  8
+    private int index; //  4
+
     #endregion
-    
-    internal ComponentEnumerator(Entity entity, EntityComponent[] components) {
-        this.entity     = entity;
-        typesEnumerator = new ComponentTypesEnumerator (entity.archetype.componentTypes);
+
+    internal ComponentEnumerator(Entity entity, EntityComponent[] components)
+    {
+        this.entity = entity;
+        typesEnumerator = new ComponentTypesEnumerator(entity.archetype.componentTypes);
         this.components = components;
     }
-    
+
     // --- IEnumerator<>
-    public readonly EntityComponent Current   => components == null
+    public readonly EntityComponent Current => components == null
         ? new EntityComponent(entity, typesEnumerator.Current)
         : components[index - 1];
-    
+
     // --- IEnumerator
     object IEnumerator.Current => Current;
-    
+
     public bool MoveNext()
     {
-        if (components == null) {
+        if (components == null)
+        {
             return typesEnumerator.bitSetEnumerator.MoveNext();
         }
-        if (index < components.Length) {
+        if (index < components.Length)
+        {
             index++;
             return true;
         }
         return false;
     }
 
-    public void Reset() {
+    public void Reset()
+    {
         typesEnumerator.bitSetEnumerator.Reset();
         index = 0;
     }
@@ -169,61 +181,64 @@ public struct ComponentEnumerator : IEnumerator<EntityComponent>
     public void Dispose() { }
 }
 
-/// <summary>An item in <see cref="EntityComponents"/> containing an entity <see cref="IComponent"/>.</summary>
+/// <summary>An item in <see cref="EntityComponents" /> containing an entity <see cref="IComponent" />.</summary>
 public readonly struct EntityComponent
 {
     // --- public fields
-    [Browse(Never)] private readonly    Entity          entity;             // 16
-    [Browse(Never)] private readonly    ComponentType   type;               //  8
-    [Browse(Never)] private readonly    EntityRelations entityRelations;    //  8
-    [Browse(Never)] private readonly    int             relationsIndex;     //  4
-    
+    [Browse(Never)]
+    private readonly Entity entity; // 16
+    [Browse(Never)]
+    private readonly EntityRelations entityRelations; //  8
+    [Browse(Never)]
+    private readonly int relationsIndex; //  4
+
     // --- public properties
     /// <summary>
-    /// Property is mainly used to display a component value in the Debugger.<br/>
-    /// It has poor performance as is boxes the returned component. 
+    ///     Property is mainly used to display a component value in the Debugger.<br />
+    ///     It has poor performance as is boxes the returned component.
     /// </summary>
     /// <remarks>
-    /// To access a component use <see cref="Entity.GetComponent{T}"/>
+    ///     To access a component use <see cref="Entity.GetComponent{T}" />
     /// </remarks>
     [Obsolete($"use {nameof(Entity)}.{nameof(Entity.GetComponent)}<T>() to access a component")]
-    public              IComponent      Value       => GetValue();
-    
-    /// <summary>Return the <see cref="System.Type"/> of an entity component.</summary>
-    public              ComponentType   Type        => type;
-    
-    public  override    string          ToString()  => type.ToString();
+    public IComponent Value => GetValue();
 
-    internal EntityComponent (Entity entity, ComponentType componentType) {
+    /// <summary>Return the <see cref="System.Type" /> of an entity component.</summary>
+    public ComponentType Type { get; }
+
+    public override string ToString() => Type.ToString();
+
+    internal EntityComponent(Entity entity, ComponentType componentType)
+    {
         this.entity = entity;
-        type        = componentType;
+        Type = componentType;
     }
-    
-    internal EntityComponent (Entity entity, ComponentType componentType, EntityRelations entityRelations, int relationsIndex) {
-        this.entity             = entity;
-        type                    = componentType;
-        this.entityRelations    = entityRelations;
-        this.relationsIndex     = relationsIndex;
+
+    internal EntityComponent(Entity entity, ComponentType componentType, EntityRelations entityRelations, int relationsIndex)
+    {
+        this.entity = entity;
+        Type = componentType;
+        this.entityRelations = entityRelations;
+        this.relationsIndex = relationsIndex;
     }
-    
-    internal IComponent GetValue() {
-        if (entityRelations == null) {
-            return entity.archetype.heapMap[type.StructIndex].GetComponentDebug(entity.compIndex);
+
+    internal IComponent GetValue()
+    {
+        if (entityRelations == null)
+        {
+            return entity.archetype.heapMap[Type.StructIndex].GetComponentDebug(entity.compIndex);
         }
         return entityRelations.GetRelationAt(entity.Id, relationsIndex);
     }
 }
 
-internal class EntityComponentsDebugView
+class EntityComponentsDebugView
 {
-    [Browse(RootHidden)]
-    public              IComponent[]        Components => entityComponents.GetComponentArray();
-
     [Browse(Never)]
-    private readonly    EntityComponents    entityComponents;
-        
-    internal EntityComponentsDebugView(EntityComponents entityComponents)
-    {
-        this.entityComponents = entityComponents;
-    }
+    private readonly EntityComponents entityComponents;
+
+    internal EntityComponentsDebugView(EntityComponents entityComponents) => this.entityComponents = entityComponents;
+
+    [Browse(RootHidden)]
+    public IComponent[] Components => entityComponents.GetComponentArray();
 }

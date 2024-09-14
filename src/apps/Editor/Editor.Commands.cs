@@ -11,13 +11,16 @@ public partial class Editor
 {
     public bool ExecuteCommand(EditorCommand command)
     {
-        if (activePanel == null) {
+        if (activePanel == null)
+        {
             return false;
         }
-        if (activePanel.OnExecuteCommand(command)) {
+        if (activePanel.OnExecuteCommand(command))
+        {
             return true;
         }
-        switch (command) {
+        switch (command)
+        {
             case CopyToClipboardCommand:
                 EditorUtils.CopyToClipboard(activePanel, "");
                 break;

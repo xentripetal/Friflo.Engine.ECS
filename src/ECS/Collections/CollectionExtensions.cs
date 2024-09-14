@@ -2,19 +2,18 @@
 // See LICENSE file in the project root for full license information.
 
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
 public static class CollectionExtensions
 {
-    
     /// <summary>
-    /// Returns a string containing the <see cref="object.ToString"/> for each component.<br/>
-    /// E.g <c>"{ 1, 3, 7 }"</c>
+    ///     Returns a string containing the <see cref="object.ToString" /> for each component.<br />
+    ///     E.g <c>"{ 1, 3, 7 }"</c>
     /// </summary>
     public static string Debug<T>(this IEnumerable<T> enumerable)
     {
@@ -22,17 +21,18 @@ public static class CollectionExtensions
         if (array.Length == 0) return "{ }";
         var sb = new StringBuilder();
         sb.Append("{ ");
-        foreach (var item in array) {
+        foreach (var item in array)
+        {
             if (sb.Length > 2) sb.Append(", ");
             sb.Append(item);
         }
         sb.Append(" }");
         return sb.ToString();
     }
-    
+
     /// <summary>
-    /// Returns a string containing the entity ids.<br/>
-    /// E.g <c>"{ 1, 3, 7 }"</c>
+    ///     Returns a string containing the entity ids.<br />
+    ///     E.g <c>"{ 1, 3, 7 }"</c>
     /// </summary>
     public static string Debug(this IEnumerable<Entity> entities)
     {
@@ -40,17 +40,18 @@ public static class CollectionExtensions
         if (array.Length == 0) return "{ }";
         var sb = new StringBuilder();
         sb.Append("{ ");
-        foreach (var entity in array) {
+        foreach (var entity in array)
+        {
             if (sb.Length > 2) sb.Append(", ");
             sb.Append(entity.Id);
         }
         sb.Append(" }");
         return sb.ToString();
     }
-    
+
     /// <summary>
-    /// Returns a string containing the <see cref="object.ToString"/> for each component.<br/>
-    /// E.g <c>"{ 1, 3, 7 }"</c>
+    ///     Returns a string containing the <see cref="object.ToString" /> for each component.<br />
+    ///     E.g <c>"{ 1, 3, 7 }"</c>
     /// </summary>
     public static string Debug<T>(this Chunk<T> chunk)
         where T : struct, IComponent
@@ -58,7 +59,8 @@ public static class CollectionExtensions
         if (chunk.Length == 0) return "{ }";
         var sb = new StringBuilder();
         sb.Append("{ ");
-        foreach (var item in chunk.Span) {
+        foreach (var item in chunk.Span)
+        {
             if (sb.Length > 2) sb.Append(", ");
             sb.Append(item);
         }

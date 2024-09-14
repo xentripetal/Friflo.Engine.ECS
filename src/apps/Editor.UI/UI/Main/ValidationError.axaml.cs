@@ -13,25 +13,33 @@ using AP = Avalonia.AvaloniaProperty;
 namespace Friflo.Editor.UI;
 
 /// <summary>
-/// Used to display data validation error in Avalonia control within a <see cref="ToolTip"/>
+///     Used to display data validation error in Avalonia control within a <see cref="ToolTip" />
 /// </summary>
 public partial class ValidationError : UserControl
 {
-    public static readonly StyledProperty<IEnumerable>  ItemsSourceProperty = AP.Register<ValidationError, IEnumerable> (nameof(ItemsSource));
-    public static readonly StyledProperty<string>       ErrorProperty       = AP.Register<ValidationError, string>      (nameof(Error), "name");
-
-    /// <summary>implement <see cref="ItemsSource"/> similar to <see cref="ItemsControl.ItemsSource"/></summary>
-    public IEnumerable  ItemsSource { get => GetValue(ItemsSourceProperty); set => SetValue(ItemsSourceProperty, value); }
-    public string       Error       { get => GetValue(ErrorProperty);       set => SetValue(ErrorProperty, value);       }
+    public static readonly StyledProperty<IEnumerable> ItemsSourceProperty = AP.Register<ValidationError, IEnumerable>(nameof(ItemsSource));
+    public static readonly StyledProperty<string> ErrorProperty = AP.Register<ValidationError, string>(nameof(Error), "name");
 
     public ValidationError()
     {
         InitializeComponent();
     }
 
+    /// <summary>implement <see cref="ItemsSource" /> similar to <see cref="ItemsControl.ItemsSource" /></summary>
+    public IEnumerable ItemsSource
+    {
+        get => GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
+    }
+    public string Error
+    {
+        get => GetValue(ErrorProperty);
+        set => SetValue(ErrorProperty, value);
+    }
+
     /// <summary>
-    /// <see cref="ItemsSource"/> is assigned within App.axaml Style:<br/>
-    /// <code>
+    ///     <see cref="ItemsSource" /> is assigned within App.axaml Style:<br />
+    ///     <code>
     ///     Style Selector="DataValidationErrors"
     ///     ...
     ///     ui:ValidationError x:DataType="DataValidationErrors" ItemsSource="{Binding}"
@@ -40,15 +48,19 @@ public partial class ValidationError : UserControl
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        if (EditorUtils.IsDesignMode) {
+        if (EditorUtils.IsDesignMode)
+        {
             return;
         }
         foreach (var error in ItemsSource)
         {
             // set error to first error entry
-            if (error is Exception exception) {
+            if (error is Exception exception)
+            {
                 Error = exception.Message;
-            } else {
+            }
+            else
+            {
                 Error = error.ToString();
             }
             break;

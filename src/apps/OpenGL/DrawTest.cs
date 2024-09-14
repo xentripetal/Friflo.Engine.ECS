@@ -7,30 +7,25 @@ namespace Friflo.Engine.OpenGL;
 
 public class DrawTest
 {
-    private GL                              Gl;
-    private BufferObject<float>             Vbo;
-    private BufferObject<uint>              Ebo;
-    private VertexArrayObject<float, uint>  Vao;
-    private Shader                          Shader;
-
     private static readonly float[] Vertices =
     {
         //X    Y      Z     R  G  B  A
-        0.5f,  0.5f, 0.0f, 1, 0, 0, 1,
-        0.5f, -0.5f, 0.0f, 0, 0, 0, 1,
-        -0.5f, -0.5f, 0.0f, 0, 0, 1, 1,
-        -0.5f,  0.5f, 0.5f, 0, 0, 0, 1
+        0.5f, 0.5f, 0.0f, 1, 0, 0, 1, 0.5f, -0.5f, 0.0f, 0, 0, 0, 1, -0.5f, -0.5f, 0.0f, 0, 0, 1, 1, -0.5f, 0.5f, 0.5f, 0, 0, 0, 1
     };
 
     private static readonly uint[] Indices =
     {
-        0, 1, 3,
-        1, 2, 3
+        0, 1, 3, 1, 2, 3
     };
+    private BufferObject<uint> Ebo;
+    private GL Gl;
+    private Shader Shader;
+    private VertexArrayObject<float, uint> Vao;
+    private BufferObject<float> Vbo;
 
 
 
-    public void OpenGlInit(Func<string,nint> procAddress)
+    public void OpenGlInit(Func<string, nint> procAddress)
     {
         Gl = GL.GetApi(procAddress);
 
@@ -53,20 +48,20 @@ public class DrawTest
         Vao.Dispose();
         Shader.Dispose();
     }
-    
+
     public unsafe void OpenGlRender(double width, double height)
     {
         Gl.ClearColor(Color.Gray);
         Gl.Clear((uint)(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit));
         Gl.Enable(EnableCap.DepthTest);
-        Gl.Viewport(0,0, (uint)width, (uint)width);
-        
+        Gl.Viewport(0, 0, (uint)width, (uint)width);
+
         Ebo.Bind();
         Vbo.Bind();
         Vao.Bind();
         Shader.Use();
-        Shader.SetUniform("uBlue", (float) Math.Sin(DateTime.Now.Millisecond / 1000f * Math.PI));
+        Shader.SetUniform("uBlue", (float)Math.Sin(DateTime.Now.Millisecond / 1000f * Math.PI));
 
-        Gl.DrawElements(PrimitiveType.Triangles, (uint) Indices.Length, DrawElementsType.UnsignedInt, null);
+        Gl.DrawElements(PrimitiveType.Triangles, (uint)Indices.Length, DrawElementsType.UnsignedInt, null);
     }
 }

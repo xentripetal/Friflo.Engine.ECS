@@ -9,6 +9,5 @@
 
     <TextBox HorizontalAlignment="Stretch"
              Classes="EditField"
-             Text="{Binding $parent[local:ValueField].Value}">
-    </TextBox>
+             Text="{Binding $parent[local:ValueField].Value}" />
 </UserControl>

@@ -6,24 +6,23 @@
 // ReSharper disable ConvertToPrimaryConstructor
 namespace Friflo.Engine.ECS;
 
-
 /// <summary>
-/// A <see cref="UniqueEntity"/> is used to assign a unique <c>string</c> to an entity within an <see cref="EntityStore"/>.
+///     A <see cref="UniqueEntity" /> is used to assign a unique <c>string</c> to an entity within an
+///     <see cref="EntityStore" />.
 /// </summary>
 /// <remarks>
-/// To find a <see cref="UniqueEntity"/> within an <see cref="EntityStore"/> use <see cref="EntityStoreBase.GetUniqueEntity"/>.<br/>
-/// It basically acts as a singleton within an <see cref="EntityStore"/>. 
+///     To find a <see cref="UniqueEntity" /> within an <see cref="EntityStore" /> use
+///     <see cref="EntityStoreBase.GetUniqueEntity" />.<br />
+///     It basically acts as a singleton within an <see cref="EntityStore" />.
 /// </remarks>
 [ComponentKey("unique")]
-[ComponentSymbol("UQ",  "255,145,0")]
+[ComponentSymbol("UQ", "255,145,0")]
 public struct UniqueEntity : IComponent
 {
-    /// <summary>Unique string identifier assigned to specific <see cref="Entity"/></summary>
-    public          string  uid;  //  8
-    
-    public override string  ToString() => $"UniqueEntity: '{uid}'";
+    /// <summary>Unique string identifier assigned to specific <see cref="Entity" /></summary>
+    public string uid; //  8
 
-    public UniqueEntity (string uid) {
-        this.uid = uid;
-    }
+    public override string ToString() => $"UniqueEntity: '{uid}'";
+
+    public UniqueEntity(string uid) => this.uid = uid;
 }

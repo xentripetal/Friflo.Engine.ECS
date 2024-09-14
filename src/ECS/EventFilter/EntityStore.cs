@@ -5,11 +5,12 @@
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-
 public partial class EntityStore
 {
-    private EventRecorder GetEventRecorder() {
-        if (intern.eventRecorder != null) {
+    private EventRecorder GetEventRecorder()
+    {
+        if (intern.eventRecorder != null)
+        {
             return intern.eventRecorder;
         }
         return intern.eventRecorder = new EventRecorder(this);

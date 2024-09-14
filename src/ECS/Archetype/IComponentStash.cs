@@ -4,12 +4,12 @@
 // ReSharper disable once CheckNamespace
 namespace Friflo.Engine.ECS;
 
-internal interface IComponentStash
+interface IComponentStash
 {
     internal IComponent GetStashDebug();
 }
 
-internal interface IComponentStash<T> : IComponentStash
+interface IComponentStash<T> : IComponentStash
     where T : struct, IComponent
 {
     internal ref T GetStashRef();

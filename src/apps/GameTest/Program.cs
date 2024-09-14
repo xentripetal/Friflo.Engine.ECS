@@ -10,12 +10,12 @@ namespace GameTest;
 public static class Program
 {
     internal static Stopwatch startTime;
-    
+
     public static void Main(string[] args) => ParallelQuery.Query_ForEach(args);
-    
+
     // public static async Task Main(string[] args) => await RunGame();
-    
-    private static async Task RunGame()
+
+    async private static Task RunGame()
     {
         startTime = new Stopwatch();
         startTime.Start();

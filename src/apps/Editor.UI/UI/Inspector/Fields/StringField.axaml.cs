@@ -12,54 +12,67 @@ namespace Friflo.Editor.UI.Inspector;
 
 public partial class StringField : UserControl, IFieldControl
 {
-    public static readonly DirectProperty<StringField, string> ValueProperty = AP.RegisterDirect<StringField, string>(nameof(Value), o => o.Value, (o, v) => o.Value = v);
+    public static readonly DirectProperty<StringField, string> ValueProperty =
+        AP.RegisterDirect<StringField, string>(nameof(Value), o => o.Value, (o, v) => o.Value = v);
+    private string initText;
+    private bool modified;
 
-    private     string          text;
-    private     string          initText;
-    private     bool            modified;
-    public      ComponentField  ComponentField { get; init; }
-    
-    public  string   Value { get => text; set => Set(ValueProperty, ref text, value); }
-    
-    public void InitValue(string value) {
-        Value       = value;
-        initText    = value;
-        modified    = false;
-    }
-    
-    private void Set(DirectPropertyBase<string> property, ref string field, string value) {
-        // ComponentField?.SetString(value);
-        modified = true;
-        SetAndRaise(property, ref field, value);
-    }
+    private string text;
 
     public StringField()
     {
         InitializeComponent();
     }
 
-    protected override void OnKeyDown(KeyEventArgs e) {
+    public string Value
+    {
+        get => text;
+        set => Set(ValueProperty, ref text, value);
+    }
+    public ComponentField ComponentField { get; init; }
+
+    public void InitValue(string value)
+    {
+        Value = value;
+        initText = value;
+        modified = false;
+    }
+
+    private void Set(DirectPropertyBase<string> property, ref string field, string value)
+    {
+        // ComponentField?.SetString(value);
+        modified = true;
+        SetAndRaise(property, ref field, value);
+    }
+
+    protected override void OnKeyDown(KeyEventArgs e)
+    {
         base.OnKeyDown(e);
-        if (e.Key == Key.Return && e.KeyModifiers == KeyModifiers.None) {
+        if (e.Key == Key.Return && e.KeyModifiers == KeyModifiers.None)
+        {
             ChangeComponentField();
         }
-        if (e.Key == Key.Escape && e.KeyModifiers == KeyModifiers.None) {
-            Value       = initText;
-            modified    = false;
+        if (e.Key == Key.Escape && e.KeyModifiers == KeyModifiers.None)
+        {
+            Value = initText;
+            modified = false;
         }
     }
 
-    protected override void OnLostFocus(RoutedEventArgs e) {
+    protected override void OnLostFocus(RoutedEventArgs e)
+    {
         base.OnLostFocus(e);
         ChangeComponentField();
     }
-    
-    private void ChangeComponentField() {
-        if (!modified) {
+
+    private void ChangeComponentField()
+    {
+        if (!modified)
+        {
             return;
         }
-        modified    = false;
-        initText    = text;
+        modified = false;
+        initText = text;
         ComponentField?.SetString(text);
     }
 }
